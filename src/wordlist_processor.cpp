@@ -50,7 +50,9 @@ bool WordlistProcessor::compareNextChunk(const std::string& filename) {
     });
 
     /* By processing chunks we can display crackedHashes[] to user as
-       they are being cracked. This is useful for long wordlists. */
+       they are being cracked. This is useful for long wordlists. In 
+       The GUI we will also implement a progressbar by deviding chunk 
+       by the total amount of lines in wordlist to get "% done". */
 
     return true; // Return true if ready to receive next batch of wordlist strings
 }
@@ -67,9 +69,9 @@ WordlistProcessor::processString(const std::string& str) {
 
     // If numberOfVariants is 0, then we only want to hash the string
     if (numberOfVariants == 0) {
-        std::string processedStr = str;
-        hashString(processedStr);
-        hashedVariants[str] = processedStr;
+        std::string hashedStr = str;
+        hashString(hashedStr);
+        hashedVariants[str] = hashedStr;
         return hashedVariants;
     }
 
