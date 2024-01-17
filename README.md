@@ -16,8 +16,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 - C++20 compatible compiler (Clang, GCC etc.)
-- CMake
-- QT 5.x
+- CMake & Ninja
+- QT Framework v6.6.1
 
 ### Installing
 1. **Clone the repository**

@@ -5,24 +5,17 @@ project(MyProject)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Optional - include external libraries
-# include(FetchContent)
+# Find QT Framework
+find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 
-# Fetch libcurl -Uncomment below to use
-# FetchContent_Declare(
-#   libcurl
-#   GIT_REPOSITORY https://github.com/curl/curl.git
-#   GIT_TAG curl-8_5_0
-# )
-# FetchContent_MakeAvailable(libcurl)
+# Add QT Framework include directories
+include_directories(${Qt6Widgets_INCLUDES})
+add_definitions(${Qt6Widgets_DEFINITIONS})
 
-# Fetch Nolhmann JSON -Uncomment below to use
-# FetchContent_Declare(
-#   nlohmann_json
-#   GIT_REPOSITORY https://github.com/nlohmann/json.git
-#   GIT_TAG v3.11.3
-# )
-# FetchContent_MakeAvailable(nlohmann_json)
+# Enable QT Meta Object Compiler
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 # Add the subdirectories
 add_subdirectory(src)
