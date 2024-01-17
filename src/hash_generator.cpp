@@ -1,8 +1,14 @@
+//==============================================================================
+// HashGenerator Class Implementation
+//==============================================================================
 #include "hash_generator.h"
 #include <openssl/evp.h>
 #include <sstream>
 #include <iomanip>
-
+//==============================================================================
+// Constructor and Destructor: HashGenerator, ~HashGenerator
+// Description: Constructor and Destructor for the HashGenerator class.
+//==============================================================================
 HashGenerator::HashGenerator() {
     // TODO: add constructor code (if needed)
 }
@@ -10,7 +16,10 @@ HashGenerator::HashGenerator() {
 HashGenerator::~HashGenerator() {
     // TODO: add destructor code (if needed)
 }
-
+//==============================================================================
+// Public Methods: computeMD5, computeSHA1, computeSHA256
+// Description: Computes a MD5, SHA1, or SHA256 hash of the input string.
+//==============================================================================
 std::string HashGenerator::computeMD5(const std::string& input) {
     unsigned char md_value[EVP_MAX_MD_SIZE];
     unsigned int md_len;
@@ -49,11 +58,16 @@ std::string HashGenerator::computeSHA256(const std::string& input) {
 
     return bytesToHexString(sha256_value, sha256_len);
 }
-
-std::string HashGenerator::bytesToHexString(const unsigned char* data, unsigned int length) {
+//==============================================================================
+// Private Helper Methods: bytesToHexString
+// Description: Converts an array of bytes to a hex string.
+//==============================================================================
+std::string HashGenerator::bytesToHexString(const unsigned char* data, 
+                                            unsigned int length) {
     std::stringstream ss;
     for (unsigned int i = 0; i < length; i++) {
-        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(data[i]);
+        ss << std::hex << std::setw(2) << std::setfill('0') 
+           << static_cast<int>(data[i]);
     }
     return ss.str();
 }
