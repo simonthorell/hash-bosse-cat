@@ -10,7 +10,7 @@
                 "--build",
                 "${workspaceFolder}/build",
                 // Set path to Qt installation
-                "-DCMAKE_PREFIX_PATH=~/Users/simonthorell/Qt/6.6.1/macos .."
+                "-DCMAKE_PREFIX_PATH=/Users/simonthorell/Qt/6.6.1/macos .."
             ],
             "group": {
                 "kind": "build",

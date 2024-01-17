@@ -5,17 +5,23 @@ project(MyProject)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Find QT Framework
-find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+include(FetchContent) # Fetch OpenSSL & QT GUI Framework
 
-# Add QT Framework include directories
-include_directories(${Qt6Widgets_INCLUDES})
-add_definitions(${Qt6Widgets_DEFINITIONS})
+# Fetch OpenSSL
+FetchContent_Declare(
+  openssl
+  GIT_REPOSITORY https://github.com/openssl/openssl
+  GIT_TAG openssl-3.2.0 # Update with latest version
+)
+FetchContent_MakeAvailable(openssl)
 
-# Enable QT Meta Object Compiler
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
+## Fetch QT Base module (Not working yet)
+# FetchContent_Declare(
+#   qt
+#   GIT_REPOSITORY https://github.com/qt/qtbase
+#   GIT_TAG v6.6.1 # Update with latest version
+# )
+# FetchContent_MakeAvailable(qt)
 
 # Add the subdirectories
 add_subdirectory(src)
