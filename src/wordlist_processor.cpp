@@ -6,6 +6,9 @@
 //              The chunk of strings is read from a file.
 //=====================================================================
 #include "wordlist_processor.h"
+#include <ranges>
+#include <algorithm>
+#include <execution>
 
 //=====================================================================
 // Constructor: HashComparator
@@ -32,14 +35,24 @@ bool WordlistProcessor::compareNextChunk(const std::string& filename) {
     if (linesRead == 0) {
         return false; // No more lines to read
     }
+    
+    // Process each string in parallel & compare to hashSet (hashes to crack)
+    std::for_each(std::execution::par, strings.begin(), strings.end(), 
+                  [&](const std::string& str) {
+        // Vector of salted & hashed variants of each string from wordlist
+        auto hashedVariants = processString(str);
+        // Compare each hashed variant to the hashSet
+        for (auto& [saltedStr, hashedStr] : hashedVariants) {
+            if (hashSet.find(hashedStr) != hashSet.end()) {
+                crackedHashes[hashedStr] = saltedStr; // Handle cracked hash
+            }
+        }
+    });
 
-    /* TODO: Add logic to process each string using processString 
-             which returns a vector of hashed variants of each string */
+    /* By processing chunks we can display crackedHashes[] to user as
+       they are being cracked. This is useful for long wordlists. */
 
-    /* TODO: Add logic to compare each hashed variant in the vector of
-             hashed variants to the hashSet (hashes to crack) */
-
-    return true; // Return true if ready to receive next batch
+    return true; // Return true if ready to receive next batch of wordlist strings
 }
 
 //=====================================================================
@@ -48,23 +61,35 @@ bool WordlistProcessor::compareNextChunk(const std::string& filename) {
 //              hashing it. The method returns a vector of hashed
 //              variants of the string.
 //=====================================================================
-std::vector<std::string> WordlistProcessor::processString(const std::string& str) {
-    std::vector<std::string> hashedVariants;
+std::unordered_map<std::string, std::string> 
+WordlistProcessor::processString(const std::string& str) {
+    std::unordered_map<std::string, std::string> hashedVariants;
 
     // If numberOfVariants is 0, then we only want to hash the string
     if (numberOfVariants == 0) {
-        std::string hashedStr = str; // Create a copy for hashing
-        hashString(hashedStr);
-        hashedVariants.push_back(hashedStr);
+        std::string processedStr = str;
+        hashString(processedStr);
+        hashedVariants[str] = processedStr;
         return hashedVariants;
     }
 
-    // Otherwise, we want to salt the string "numberOfVariants" times and hash them
+    // Otherwise, we want to salt and hash the string "numberOfVariants" times
+    std::vector<std::string> saltedStrings(numberOfVariants, str);
+    std::vector<std::string> hashedStrings(numberOfVariants);
+
+    std::transform( 
+        std::execution::par, // Parallel computation of processed strings
+        saltedStrings.begin(), saltedStrings.end(), hashedStrings.begin(),
+        [&](std::string& s) {
+            saltString(s);
+            std::string hashed = s;
+            hashString(hashed);
+            return hashed;
+        }
+    );
+
     for (int i = 0; i < numberOfVariants; ++i) {
-        std::string hashedSaltedStr = str; // Create a copy for salting and hashing
-        saltString(hashedSaltedStr);
-        hashString(hashedSaltedStr);
-        hashedVariants.push_back(hashedSaltedStr);
+        hashedVariants[saltedStrings[i]] = hashedStrings[i];
     }
 
     return hashedVariants;
@@ -76,8 +101,7 @@ std::vector<std::string> WordlistProcessor::processString(const std::string& str
 //=====================================================================
 void WordlistProcessor::saltString(std::string& str) {
     std::string salt = saltGen.generateSalt(saltLength);
-    // Add salt to the original string
-    str += salt;
+    str += salt; // Add salt to the original string
 }
 
 void WordlistProcessor::hashString(std::string& str) {

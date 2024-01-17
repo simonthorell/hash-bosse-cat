@@ -5,6 +5,7 @@
 #include "salt_generator.h"
 #include "hash_generator.h"
 #include <unordered_set>
+#include <unordered_map>
 #include <vector>
 #include <string>
 
@@ -24,6 +25,7 @@ private:
     int numberOfVariants; // Number of salted variants to generate for each string
     int saltLength; // Length of salt to generate for each string
     std::unordered_set<std::string> hashSet; // Set of hashes to compare against wordlist
+    std::unordered_map<std::string, std::string> crackedHashes; // Map of cracked hashes
 public:
     // Constructor
     WordlistProcessor(const FileHandler& fileHandler, 
@@ -36,7 +38,7 @@ public:
     bool compareNextChunk(const std::string& filename);
 
     // Private Methods
-    std::vector<std::string> processString(const std::string& str);
+    std::unordered_map<std::string, std::string> processString(const std::string& str);
     void saltString(std::string& str);
     void hashString(std::string& str);
 };
