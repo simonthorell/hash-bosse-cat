@@ -36,5 +36,14 @@ int main() {
     // Output the hash
     std::cout << "MD5 Hash: " << hash << std::endl;
 
+    // Logic Test to compare two hashes
+    std::string hashToCrack = "2e970e822e1a8834203d06abb60f59ec";
+    
+    if (hash == hashToCrack) {
+        std::cout << "Hashes Match! You Rock! :)" << std::endl;
+    } else {
+        std::cout << "Hashes Do Not Match! You Suck! Try again... :(" << std::endl;
+    }
+
     return 0;
 }
