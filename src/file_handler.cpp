@@ -3,22 +3,34 @@
 //=============================================================================
 #include "file_handler.h"
 #include <fstream>
+#include <iostream>
+
 //=============================================================================
 // Constructor: FileHandler
 //=============================================================================
 FileHandler::FileHandler(size_t chunkSize) : chunkSize(chunkSize) {}
+
 //=============================================================================
-// Public Methods: FileHandler
+// Public Methods: readHashesFromFile, readStringsFromFile
+// Description: These methods read hashes or strings from a file and return
+//              them in a set or vector respectively.
 //=============================================================================
-std::unordered_set<std::string> FileHandler::readHashesFromFile(const std::string& filename) {
-    std::unordered_set<std::string> hashSet;
+// TODO: Compare if this is faster than std::unordered_set ???
+std::set<std::string> FileHandler::readHashesFromFile(const std::string& filename) {
+    std::set<std::string> hashSet; // Keep in sorted order for faster lookup
     std::ifstream file(filename);
+
+    if (!file.is_open()) {
+        std::cerr << "Failed to open the file: " << filename << std::endl;
+        return hashSet; // Return the empty set
+    }
+
     std::string line;
-    
     while (std::getline(file, line)) {
         hashSet.insert(line);
     }
     
+    file.close(); // Close the file when done
     return hashSet;
 }
 
@@ -38,7 +50,10 @@ std::vector<std::string> FileHandler::readStringsFromFile(const std::string& fil
     return strings;
 }
 
-/* Example usage:
+//=============================================================================
+// Example usage:
+//=============================================================================
+/*
 FileHandler fileHandler;
 auto hashedPasswords = fileHandler.readHashesFromFile("hashes.txt");
 auto wordlistStrings = fileHandler.readStringsFromFile("wordlist.txt");

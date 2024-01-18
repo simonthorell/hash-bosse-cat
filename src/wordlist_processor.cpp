@@ -15,20 +15,18 @@
 // Description: This constructor creates a HashComparator object.
 //=====================================================================
 WordlistProcessor::WordlistProcessor(const FileHandler& fileHandler, 
-                               const std::unordered_set<std::string>& hashSet,
+                               const std::set<std::string>& hashSet,
                                HashAlgorithm algorithm,
                                int numberOfVariants,
                                int saltLength)
 : fileHandler(fileHandler), hashSet(hashSet) {}
 
 //=====================================================================
-// Method: compareNextChunk
+// Method: compareWordlistChunk
 // Description: This method compares a chunk of strings with the hashSet
 //              and returns true if ready to receive next batch.
-// Parameters:  filename - The name of the file to read from
-// Return:      bool - True if ready to receive next batch
 //=====================================================================
-bool WordlistProcessor::compareNextChunk(const std::string& filename) {
+bool WordlistProcessor::compareWordlistChunk(const std::string& filename) {
     size_t linesRead = 0;
     auto strings = fileHandler.readStringsFromFile(filename, linesRead);
     
@@ -43,7 +41,7 @@ bool WordlistProcessor::compareNextChunk(const std::string& filename) {
         auto hashedVariants = processString(str);
         // Compare each hashed variant to the hashSet
         for (auto& [saltedStr, hashedStr] : hashedVariants) {
-            if (hashSet.find(hashedStr) != hashSet.end()) {
+            if (hashSet.find(hashedStr) != hashSet.end()) { // Binary search set
                 crackedHashes[hashedStr] = saltedStr; // Handle cracked hash
             }
         }
