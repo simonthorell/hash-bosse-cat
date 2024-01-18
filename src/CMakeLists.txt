@@ -1,7 +1,6 @@
 # Collects all .cpp files from current and subdirectories into SOURCE_FILES
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 # Find OpenSSL & QT Framework libraries
 find_package(OpenSSL REQUIRED)
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
