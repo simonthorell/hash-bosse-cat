@@ -1,13 +1,15 @@
 # HashBosseCat Password Recovery Tool
-### Built using C++, QT Framework and CMake.
+### Built using C++, Qt Framework, openSSL and CMake.
 
 ## Introduction
-Welcome to `hash-bosse-cat`, a sophisticated password recovery tool developed with the cutting-edge C++20 standards and the robust QT GUI framework. Inspired by the agility and sharpness of a cat named Bosse, this tool aims to provide a sleek, user-friendly interface coupled with powerful wordlist-based hash cracking algorithms.
+Welcome to `hash-bosse-cat`, a sophisticated password recovery tool developed with the cutting-edge C++20 standards and the robust Qt framework for desktop GUI. Inspired by the agility and sharpness of a cat named Bosse, this tool aims to provide a sleek, user-friendly interface coupled with powerful wordlist-based hash cracking algorithms.
 
 ## Features
 - **Modern C++20**: Utilizes the latest language features for optimal performance and code clarity.
-- **QT GUI Framework**: Offers a responsive and intuitive user interface.
+- **Qt Framework**: Offers a responsive and intuitive user interface.
+- **OpenSSL Library Integration**: Employs the OpenSSL library for secure and efficient hashing of strings.
 - **Wordlist-Based Cracking**: Leverages comprehensive wordlists for efficient hash cracking.
+- **Salt Wordlists**: Built in function to add common salts and create variation of each string in wordlists.
 - **Support for Multiple Hash Types**: Compatible with a variety of hashing algorithms.
 - **Cross-Platform**: Works seamlessly on multiple operating systems thanks to the QT framework.
 
@@ -16,21 +18,27 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 - C++20 compatible compiler (Clang, GCC etc.)
-- CMake & Ninja
-- QT Framework v6.6.1
+- Qt Framework v6.6.1
+- CMake & Ninja [optional] (included in Qt Framework)
 
 ### Installing
 1. **Clone the repository**
     ```bash
-    git clone https://github.com/yourusername/hash-bosse-cat.git
+    git clone https://github.com/simonthorell/hash-bosse-cat.git
     ```
 2. **Navigate to the project directory**
     ```bash
     cd hash-bosse-cat
     ```
-3. **Build the project**
-    - Use the QT Creator IDE or the qmake build tool for building the project.
-    - Follow QT specific instructions for your platform to get the GUI up and running.
+3. **Build the project using VS Code**
+    - Open the project folder in Visual Studio Code.
+    - Ensure you have the CMake Tools and C++ extensions installed.
+    - Configure the project by selecting the appropriate kit (compiler, platform, etc.) from the CMake Tools extension.
+    - Build the project by invoking the build command from the CMake Tools extension.
+    - If necessary, refer to the VS Code documentation for detailed instructions on setting up and using CMake Tools.
+
+4. **Modify the GUI**
+    - Use the Qt Creator IDE to get a graphic tool for modifying the .ui files.
 
 ## Usage
 - Launch the application after successful installation.
