@@ -15,6 +15,10 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(openssl)
 
+# Find the Qt6 installation
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_PREFIX_PATH "/Users/simonthorell/Qt/6.6.1/macos/lib/cmake")
+
 ## Fetch QT Base module (Not working yet)
 # FetchContent_Declare(
 #   qt
@@ -25,6 +29,7 @@ FetchContent_MakeAvailable(openssl)
 
 # Add the subdirectories
 add_subdirectory(src)
+add_subdirectory(forms)
 add_subdirectory(tests)
 
 # Add compiler options

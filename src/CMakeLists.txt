@@ -1,13 +1,10 @@
 # Collects all .cpp files from current and subdirectories into SOURCE_FILES
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 # Find OpenSSL & QT Framework libraries
 find_package(OpenSSL REQUIRED)
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
-
-# Temporary fix: after initial build run the following shell command: 
-# "cd build && cmake -DCMAKE_PREFIX_PATH=/Users/simonthorell/Qt/6.6.1/macos .."
-# then compile program again to make it work with qt6
 
 # Add QT Framework include directories
 include_directories(${Qt6Widgets_INCLUDES})
