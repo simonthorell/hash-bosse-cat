@@ -78,9 +78,8 @@
     "semaphore": "cpp",
     "stack": "cpp",
     "stop_token": "cpp",
-
-    // Qt stuff
     "*.ui": "xml",
     "*.qrc": "xml",
+    "qapplication": "cpp"
 },
 }
