@@ -37,7 +37,11 @@ These instructions will get you a copy of the project up and running on your loc
     - Build the project by invoking the build command from the CMake Tools extension.
     - If necessary, refer to the VS Code documentation for detailed instructions on setting up and using CMake Tools.
 
-4. **Modify the GUI**
+4. **Set Qt installation path**
+    - open 'c_cpp_properties.json' inside the .vscode folder and modify 'includePath' to match your Qt install path. This will make shure VS Code finds the Qt header files.
+    - In the main 'CMakeLists.txt' change 'set(CMAKE_PREFIX_PATH <ADD_YOUR_PATH>' to your Qt install path. This will make sure that CMake finds all necessary files for compilation.
+
+5. **Modify the GUI**
     - Use the Qt Creator IDE to get a graphic tool for modifying the .ui files.
 
 ## Usage
@@ -56,7 +60,7 @@ Contributions are what make the open-source community such an amazing place to l
 5. Open a Pull Request
 
 ## License
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the GPL version 3 License. See `LICENSE` for more information.  
 
 ## Acknowledgements
 - Hats off to Bosse, the cat! Her knack for naps and cozy vibes turn coding marathons into a purr-fest. She's the silent, fluffy cheerleader behind our sleek, efficient code. Cheers to Bosse, our whiskered muse and relaxation guru!
