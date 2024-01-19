@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "macOS",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/Users/simonthorell/Qt/6.6.1/macos/lib/QtWidgets.framework/Headers",
+                "/Users/simonthorell/Qt/6.6.1/macos/lib/QtCore.framework/Headers"
+                // Add other necessary Qt module paths
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks",
+                "/Users/simonthorell/Qt/6.6.1/macos/lib"
+            ],
+            // "compilerPath": "/usr/bin/clang++",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "macos-clang-x64"
+        }
+    ],
+    "version": 4
+}
