@@ -4,6 +4,7 @@
             "name": "macOS",
             "includePath": [
                 "${workspaceFolder}/**",
+                "/Users/simonthorell/Qt/6.6.1/macos/**",
                 "/Users/simonthorell/Qt/6.6.1/macos/lib/QtWidgets.framework/Headers",
                 "/Users/simonthorell/Qt/6.6.1/macos/lib/QtCore.framework/Headers"
             ],
