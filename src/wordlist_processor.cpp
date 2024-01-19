@@ -40,9 +40,10 @@ bool WordlistProcessor::compareWordlistChunk(const std::string& filename) {
         // Vector of salted & hashed variants of each string from wordlist
         auto hashedVariants = processString(str);
         // Compare each hashed variant to the hashSet
-        for (auto& [saltedStr, hashedStr] : hashedVariants) {
+        for (auto& [str, hashedStr] : hashedVariants) {
             if (hashSet.find(hashedStr) != hashSet.end()) { // Binary search set
-                crackedHashes[hashedStr] = saltedStr; // Handle cracked hash
+                crackedHashes[hashedStr] = str; // Handle cracked hash
+                // Hash = key, String = value
             }
         }
     });

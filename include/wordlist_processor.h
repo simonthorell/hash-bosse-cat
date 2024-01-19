@@ -21,9 +21,9 @@ private:
     SaltGenerator saltGen;
     HashGenerator hashGen;
 
-    HashAlgorithm hashAlgorithm; // The algorithm to use for hashing (MD5, SHA1, SHA256)
-    int numberOfVariants; // Number of salted variants to generate for each string
-    int saltLength; // Length of salt to generate for each string
+    HashAlgorithm hashAlgorithm;   // The algorithm to use for hashing (MD5, SHA1, SHA256)
+    int numberOfVariants;          // Number of salted variants to generate for each string
+    int saltLength;                // Length of salt to generate for each string
     std::set<std::string> hashSet; // Set of hashes that wordlist will be compared against
     std::unordered_map<std::string, std::string> crackedHashes; // Map of cracked hashes
 public:
