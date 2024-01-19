@@ -42,4 +42,3 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${SOURCE_DIR})
 
 #=================== LINKING LIBRARIES ====================#
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE MyProjectLib OpenSSL::SSL OpenSSL::Crypto Qt6::Widgets)
-

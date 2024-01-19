@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(FetchContent) # Fetch OpenSSL & QT GUI Framework
 
+#======================= INCLUSION OF OpenSSL =======================#
 # Fetch OpenSSL
 FetchContent_Declare(
   openssl
@@ -14,6 +15,21 @@ FetchContent_Declare(
   GIT_TAG openssl-3.2.0 # Update with latest version
 )
 FetchContent_MakeAvailable(openssl)
+
+# Find OpenSSL
+find_package(OpenSSL REQUIRED)
+
+#======================= INCLUSION OF Qt =======================#
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_PREFIX_PATH $ENV{QTDIR})
+
+# Set the path to the Qt Framework
+set(CMAKE_PREFIX_PATH "/Users/simonthorell/Qt/6.6.1/macos/lib/cmake")
+
+# Find QT Framework libraries
+find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 
 ## Fetch QT Base module (Not working yet)
 # FetchContent_Declare(
@@ -23,18 +39,7 @@ FetchContent_MakeAvailable(openssl)
 # )
 # FetchContent_MakeAvailable(qt)
 
-# find includes in the corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_PREFIX_PATH $ENV{QTDIR})
-
-# find Qt6 and required components
-set(CMAKE_PREFIX_PATH "/Users/simonthorell/Qt/6.6.1/macos/lib/cmake")
-
-# Find OpenSSL & QT Framework libraries
-find_package(OpenSSL REQUIRED)
-find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+#==================================================================#
 
 # Add the subdirectories
 add_subdirectory(src)
