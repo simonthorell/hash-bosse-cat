@@ -5,7 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/Users/simonthorell/Qt/6.6.1/macos/lib/QtWidgets.framework/Headers",
-                "/Users/simonthorell/Qt/6.6.1/macos/lib/QtCore.framework/Headers"
+                "/Users/simonthorell/Qt/6.6.1/macos/lib/QtCore.framework/Headers",
+                // Below may not be necessary - remove later!
+                "/Users/simonthorell/Qt/6.6.1/macos/lib/QtGui.framework/Headers"
                 // Add other necessary Qt module paths
             ],
             "defines": [],
