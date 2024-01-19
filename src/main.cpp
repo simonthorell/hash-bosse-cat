@@ -12,45 +12,21 @@
 #include <QApplication>
 
 #include <iostream>
+#include "mainwindow.h"     // GUI
 #include "hash_generator.h" // MD5, SHA1, SHA256
 #include "salt_generator.h" // Add salt to strings
 
-void styleGUI(QApplication& app);    // Style the GUI
 void testClasses(); // For testing purposes
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    styleGUI(app);
+    MainWindow mainWindow;
+    mainWindow.styleGUI(app);
     MainWindow w;
     w.show();
 
     // testClasses(); // For testing classes in console
     return app.exec();
-}
-
-void styleGUI(QApplication& app) {
-    // Dark color palette
-    QPalette darkPalette;
-    darkPalette.setColor(QPalette::Window, QColor(00, 00, 00));
-    darkPalette.setColor(QPalette::WindowText, Qt::white);
-    darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
-    darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
-    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
-    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
-    darkPalette.setColor(QPalette::Text, Qt::white);
-    darkPalette.setColor(QPalette::Button, QColor(30, 30, 30));
-    darkPalette.setColor(QPalette::ButtonText, Qt::white);
-    darkPalette.setColor(QPalette::BrightText, Qt::red);
-    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-    darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-    
-    app.setPalette(darkPalette);
-
-    // STYLE SHEET FOR QCOMBOBOX
-    app.setStyleSheet("QComboBox { background-color: #303030; color: white; }");
-    app.setStyleSheet("QToolTip { color: #ffffff; background-color: #000000; border: 1px solid white; }");
-    app.setStyleSheet("QPushButton { background-color: #303030; color: white; }");
 }
 
 void testClasses() {

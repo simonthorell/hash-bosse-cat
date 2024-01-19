@@ -17,6 +17,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    // Style GUI
+    void styleGUI(QApplication& app);
+
 private slots:
     void on_graphicsView_rubberBandChanged(const QRect &viewportRect, const QPointF &fromScenePoint, const QPointF &toScenePoint);
 
