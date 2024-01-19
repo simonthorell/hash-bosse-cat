@@ -210,7 +210,20 @@
      <string>Cracked Hashes:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="logoText">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>10</y>
+      <width>250</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>HashBosseCat</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="logoType">
     <property name="geometry">
      <rect>
       <x>670</x>

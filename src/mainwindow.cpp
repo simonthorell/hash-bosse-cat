@@ -14,17 +14,27 @@ MainWindow::MainWindow(QWidget *parent)
     QPixmap pix("assets/black_bosse.png");
 
     // Set the pixmap to the label
-    ui->label->setPixmap(pix);
+    ui->logoType->setPixmap(pix);
 
     // If you want to resize the label to fit the image
-    ui->label->setScaledContents(true);
-    ui->label->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
+    ui->logoType->setScaledContents(true);
+    ui->logoType->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
 
-    // // Create and add a toolbar
-    // QToolBar *toolBar = addToolBar(tr("Tools"));
-    
-    // // Set the stylesheet for the toolbar
-    // toolBar->setStyleSheet("QToolBar { background-color: #333333; }");
+    // Set logo name style 
+    QLabel* logoText = ui->logoText;
+    QFont font = logoText->font();        // Get the current font
+    font.setFamily("Monospace");          // Set to monospaced font
+    font.setStyleHint(QFont::TypeWriter); // Style hint for monospaced
+    font.setPointSize(34);                // Set the font size   
+    logoText->setFont(font);              // Apply the font to the QLabel
+
+    // Set the alignment (if needed)
+    logoText->setAlignment(Qt::AlignCenter);
+
+    // Set the text color to white
+    QPalette palette = logoText->palette();
+    palette.setColor(QPalette::WindowText, Qt::white);
+    logoText->setPalette(palette);
 }
 
 MainWindow::~MainWindow()
