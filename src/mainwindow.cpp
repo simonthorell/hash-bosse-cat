@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 
 #include <QPixmap>    // Add Image
-// #include <QToolBar>   // Customize toolbar
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Set the pixmap to the label
     ui->logoType->setPixmap(pix);
 
-    // If you want to resize the label to fit the image
+    // Resize the label to fit the image
     ui->logoType->setScaledContents(true);
     ui->logoType->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
 
@@ -28,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     font.setPointSize(34);                // Set the font size   
     logoText->setFont(font);              // Apply the font to the QLabel
 
-    // Set the alignment (if needed)
+    // Set the alignment of the logo text to center
     logoText->setAlignment(Qt::AlignCenter);
 
     // Set the text color to white
@@ -46,4 +45,3 @@ void MainWindow::on_graphicsView_rubberBandChanged(const QRect &viewportRect, co
 {
 
 }
-
