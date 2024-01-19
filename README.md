@@ -38,7 +38,7 @@ These instructions will get you a copy of the project up and running on your loc
     - If necessary, refer to the VS Code documentation for detailed instructions on setting up and using CMake Tools.
 
 4. **Set Qt installation path**
-    - open 'c_cpp_properties.json' inside the .vscode folder and modify 'includePath' to match your Qt install path. This will make shure VS Code finds the Qt header files.
+    - open 'c_cpp_properties.json' inside the .vscode folder and modify 'includePath' & 'macFrameworkPath' to match your Qt install path. This will make shure VS Code finds the Qt header files.
     - In the main 'CMakeLists.txt' change 'set(CMAKE_PREFIX_PATH <ADD_YOUR_PATH>' to your Qt install path. This will make sure that CMake finds all necessary files for compilation.
 
 5. **Modify the GUI**

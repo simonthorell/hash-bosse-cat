@@ -5,10 +5,10 @@ project(MyProject VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-include(FetchContent) # Fetch OpenSSL & QT GUI Framework
+# Fetch external libraries
+include(FetchContent)
 
 #======================= INCLUSION OF OpenSSL =======================#
-# Fetch OpenSSL
 FetchContent_Declare(
   openssl
   GIT_REPOSITORY https://github.com/openssl/openssl
@@ -23,7 +23,7 @@ find_package(OpenSSL REQUIRED)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_PREFIX_PATH $ENV{QTDIR})
+# set(CMAKE_PREFIX_PATH $ENV{QTDIR}) // Remove later
 
 # Set the path to the Qt Framework
 set(CMAKE_PREFIX_PATH "/Users/simonthorell/Qt/6.6.1/macos/lib/cmake")
@@ -31,7 +31,7 @@ set(CMAKE_PREFIX_PATH "/Users/simonthorell/Qt/6.6.1/macos/lib/cmake")
 # Find QT Framework libraries
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 
-## Fetch QT Base module (Not working yet)
+## Fetch QT Base module (Not working properly! // Simon Thorell 2024-01-19)
 # FetchContent_Declare(
 #   qt
 #   GIT_REPOSITORY https://github.com/qt/qtbase

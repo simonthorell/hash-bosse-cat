@@ -9,8 +9,6 @@
             "args": [
                 "--build",
                 "${workspaceFolder}/build",
-                // Set path to Qt installation (Fixed in CMake file 2024-01-18)
-                // "-DCMAKE_PREFIX_PATH=/Users/simonthorell/Qt/6.6.1/macos .."
             ],
             "group": {
                 "kind": "build",
