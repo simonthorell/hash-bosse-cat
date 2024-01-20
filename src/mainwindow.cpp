@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     QFont font = logoText->font();        // Get the current font
     font.setFamily("Monospace");          // Set to monospaced font
     font.setStyleHint(QFont::TypeWriter); // Style hint for monospaced
-    font.setPointSize(34);                // Set the font size   
+    font.setPointSize(36);                // Set the font size   
     logoText->setFont(font);              // Apply the font to the QLabel
 
     // Set the alignment of the logo text to center
