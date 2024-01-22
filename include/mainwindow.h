@@ -2,9 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <unordered_map>
 #include <QString>
 
+#include <unordered_map>
+#include <set>         // std::set
+
+#include "file_handler.h"        // FileHandler
+#include "wordlist_processor.h" // WordlistProcessor
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -25,7 +29,7 @@ private:
     std::unordered_map<std::string, std::string> WordlistFilesMap;
 
     // Selected Hashing Algorithm & Salt Amount
-    std::string hashingAlgorithm;
+    HashAlgorithm hashingAlgorithm;
     int saltAmount;
 
 public:

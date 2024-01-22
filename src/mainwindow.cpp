@@ -7,11 +7,6 @@
 #include <QMessageBox> // Pop-up Window
 #include <QFile>
 
-#include <set>         // std::set
-
-#include "file_handler.h"        // FileHandler
-#include "wordlist_processor.h" // WordlistProcessor
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -22,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     singleHash = "";
     HashesFilesMap.clear();
     WordlistFilesMap.clear();
-    hashingAlgorithm = "MD5"; // Default Hashing Algorithm
+    hashingAlgorithm = HashAlgorithm::SHA256; // Default Hashing Algorithm
     saltAmount = 0;           // Default Salt Amount
 
     // Load the app logo image
@@ -113,7 +108,17 @@ void MainWindow::setSingleHashFromInput()
 void MainWindow::setHashingAlgorithm(int index)
 {
     // Get the text from the combo_HashingAlgorithm QComboBox
-    hashingAlgorithm = ui->comboBox_SelectHashAlgo->itemText(index).toUtf8().constData();
+    std::string selection = ui->comboBox_SelectHashAlgo->itemText(index).toUtf8().constData();
+
+    if (selection == "MD5") {
+        hashingAlgorithm = HashAlgorithm::MD5;
+    } else if (selection == "SHA1") {
+        hashingAlgorithm = HashAlgorithm::SHA1;
+    } else if (selection == "SHA256") {
+        hashingAlgorithm = HashAlgorithm::SHA256;
+    } else {
+        hashingAlgorithm = HashAlgorithm::SHA256;
+    }
 }
 
 void MainWindow::setSaltAmount(int value)
@@ -171,54 +176,57 @@ void MainWindow::onButtonUploadWordlistClicked()
 
 void MainWindow::onButtonCrackHashesClicked()
 {
+    ui->list_crackedHashes->clear(); // Clear the cracked hashes list
+
     int chunkSize = 1000; // TODO: Make this a user input field?
     FileHandler fileHandler(chunkSize);
     size_t totalHashesLines = fileHandler.countFilesLinesInMap(HashesFilesMap);
     size_t totalWordlistLines = fileHandler.countFilesLinesInMap(WordlistFilesMap);
 
-    std::unordered_map TempHashedFilesMap = HashesFilesMap;
+    // Create a set to keep track of cracked hashes to avoid duplicates
+    std::set<std::string> crackedHashSet;
 
-    while(!TempHashedFilesMap.empty()) {
-        // Get the first element in the map
-        auto it = TempHashedFilesMap.begin();
-        auto wl = WordlistFilesMap.begin();
-        // QMessageBox::information(this, "Cracking Hashes", "Cracking the hashes in: " + QString::fromStdString(it->first));
+    // Iterate over each wordlist file in WordlistFilesMap
+    for (const auto& wlEntry : WordlistFilesMap) {
+        // Get the wordlist file name and path
+        std::string wlName = wlEntry.first;
+        std::string wlPath = wlEntry.second;
 
-        // Get the file name and path
-        std::string fileName = it->first;
-        std::string filePath = it->second;
+        // Iterate over each hashed file in HashesFilesMap
+        for (const auto& hashEntry : HashesFilesMap) {
+            // Get the hashed file name and path
+            std::string fileName = hashEntry.first;
+            std::string filePath = hashEntry.second;
 
-        std::string wlName = wl->first;
-        std::string wlPath = wl->second;
+            // Read the hash set from the hashed file
+            std::set<std::string> hashSet = fileHandler.readHashesFromFile(filePath);
 
-        std::set hashSet = fileHandler.readHashesFromFile(filePath);
-        // QMessageBox::information(this, "Cracking Hashes", "Read " + QString::number(hashSet.size()) + " hashes from file: " + QString::fromStdString(fileName));
+            // Crack the hashes
+            WordlistProcessor processor(fileHandler, hashSet, hashingAlgorithm, 0, saltAmount);
+            bool readyForNextBatch = processor.compareWordlistChunk(wlPath);
 
-        // Crack the hashes
-        WordlistProcessor processor(fileHandler, hashSet, HashAlgorithm::MD5, 0, saltAmount);
-        bool readyForNextBatch = processor.compareWordlistChunk(wlPath);
+            // Add cracked hashes to the set
+            for (const auto& pair : processor.crackedHashes) {
+                const std::string& hash = pair.first;
+                // Check if the hash is not a duplicate
+                if (crackedHashSet.find(hash) == crackedHashSet.end()) {
+                    crackedHashSet.insert(hash);
 
-        // Remove the file from the map
-        TempHashedFilesMap.erase(it);
+                    // Convert std::string to QString
+                    QString password = QString::fromStdString(pair.second);
 
-        // Add to the crackedHashes qt list which file was cracked
-        // ui->list_crackedHashes->addItem(QString::fromStdString(fileName));
+                    // Create the display string for the QListWidgetItem
+                    QString displayText = QString::fromStdString(hash) + ": " + password;
 
-        ui->list_crackedHashes->clear();
-        for (const auto& pair : processor.crackedHashes) {
-            // Convert std::string to QString
-            QString hash = QString::fromStdString(pair.first);
-            QString password = QString::fromStdString(pair.second);
-
-            // Create the display string for the QListWidgetItem
-            QString displayText = hash + " : " + password;
-
-            // Add the item to the list
-            ui->list_crackedHashes->addItem(displayText);
+                    // Add the item to the list
+                    ui->list_crackedHashes->addItem(displayText);
+                }
+            }
         }
     }
 
-    // TODO: Display a success message and ask to save the results to a file
+    QMessageBox::information(this, "Cracked" , "Cracked " + QString::number(crackedHashSet.size()) + " out of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
+    // TODO: Ask user to save result in a file
 
     // Display the QString in a QMessageBox
     // QMessageBox::information(this, "Single Hash", "The single hash is: " + QString::fromStdString(singleHash)
