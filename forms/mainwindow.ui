@@ -30,7 +30,7 @@
      <rect>
       <x>410</x>
       <y>90</y>
-      <width>120</width>
+      <width>150</width>
       <height>32</height>
      </rect>
     </property>
@@ -41,7 +41,7 @@
    <widget class="QPushButton" name="Button_RemoveWordlist">
     <property name="geometry">
      <rect>
-      <x>540</x>
+      <x>570</x>
       <y>90</y>
       <width>80</width>
       <height>32</height>
@@ -66,7 +66,7 @@
      <rect>
       <x>20</x>
       <y>90</y>
-      <width>120</width>
+      <width>125</width>
       <height>32</height>
      </rect>
     </property>
@@ -77,7 +77,7 @@
    <widget class="QPushButton" name="Button_RemoveHashes">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>155</x>
       <y>90</y>
       <width>80</width>
       <height>32</height>
@@ -120,7 +120,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Crack This Password Hash Only:</string>
+     <string>Crack This Single Hash Only:</string>
     </property>
    </widget>
    <widget class="QPushButton" name="Button_CrackHashes">

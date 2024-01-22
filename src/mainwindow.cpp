@@ -20,6 +20,9 @@ MainWindow::MainWindow(QWidget *parent)
     hashingAlgorithm = HashAlgorithm::SHA256; // Default Hashing Algorithm
     saltAmount = 0;           // Default Salt Amount
 
+    // Set window to fixed size
+    this->setFixedSize(this->size()); // This sets the fixed size to the current size
+
     // Load the app logo image
     QPixmap pix("assets/black_bosse.png");
 
@@ -46,6 +49,10 @@ MainWindow::MainWindow(QWidget *parent)
     palette.setColor(QPalette::WindowText, Qt::white);
     logoText->setPalette(palette);
 
+    // // Initialize slider value from saltAmount variable
+    // ui->Slider_SelectSaltAmount->setValue(saltAmount);
+    // setSaltAmount(saltAmount);
+
     // Connect the UI InputFields to the slots
     connect(ui->Input_SingleHash, &QLineEdit::textChanged, this, &MainWindow::setSingleHashFromInput);
     connect(ui->comboBox_SelectHashAlgo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -58,6 +65,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Button_UploadWordlist, SIGNAL(clicked()), this, SLOT(onButtonUploadWordlistClicked()));
     connect(ui->Button_RemoveWordlist, SIGNAL(clicked()), this, SLOT(onButtonRemoveWordlistClicked()));
     connect(ui->Button_CrackHashes, SIGNAL(clicked()), this, SLOT(onButtonCrackHashesClicked()));
+
+    // Force UI to update and process any pending events
+    QApplication::processEvents();
 }
 
 void MainWindow::styleGUI(QApplication& app) {
@@ -85,6 +95,44 @@ void MainWindow::styleGUI(QApplication& app) {
         "QToolTip { color: #ffffff; background-color: #000000; border: 1px solid white; }"
         "QPushButton { background-color: #303030; color: white; }"
     );
+
+    // STYLE SHEET FOR QSLIDER
+    greyStyle = "QSlider::groove:horizontal {"
+                "    border: 1px solid #999999;"
+                "    height: 8px;"  // Groove thickness
+                "    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #b1b1b1, stop:1 #c4c4c4);"
+                "}"
+                "QSlider::handle:horizontal {"
+                "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #f6f7fa);"
+                "    border: 1px solid #5c5c5c;"
+                "    width: 18px;"  // Handle width
+                "    margin: -2px 0;"  // Handle margin
+                "    border-radius: 3px;"  // Handle border radius
+                "}"
+                "QSlider::sub-page:horizontal {"
+                "    background: grey;"  // Color for the filled part of the groove
+                "}";
+
+    neonGreenStyle = "QSlider::groove:horizontal {"
+                    "    border: 1px solid #999999;"
+                    "    height: 8px;"  // Groove thickness
+                    "    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #b1b1b1, stop:1 #c4c4c4);"
+                    "}"
+                    "QSlider::handle:horizontal {"
+                    "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #f6f7fa);"
+                    "    border: 1px solid #5c5c5c;"
+                    "    width: 18px;"  // Handle width
+                    "    margin: -2px 0;"  // Handle margin
+                    "    border-radius: 3px;"  // Handle border radius
+                    "}"
+                    "QSlider::sub-page:horizontal {"
+                    "    background: #3339FF14;"  // Neon green color for the filled part of the groove
+                    "}";
+
+    // Initialize slider value from saltAmount variable
+    ui->Slider_SelectSaltAmount->setValue(saltAmount);
+    // Set the initial style of the slider based on the saltAmount value
+    setSaltAmount(saltAmount);
 }
 
 MainWindow::~MainWindow()
@@ -92,10 +140,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_graphicsView_rubberBandChanged(const QRect &viewportRect, const QPointF &fromScenePoint, const QPointF &toScenePoint)
-{
+// void MainWindow::on_graphicsView_rubberBandChanged(const QRect &viewportRect, const QPointF &fromScenePoint, const QPointF &toScenePoint)
+// {
 
-}
+// }
 
 //=========================================================================
 // UI Input Fields
@@ -127,8 +175,17 @@ void MainWindow::setSaltAmount(int value)
 {
     saltAmount = value;
 
+    if (value == 0) {
+        ui->Slider_SelectSaltAmount->setStyleSheet(greyStyle);
+    } else {
+        ui->Slider_SelectSaltAmount->setStyleSheet(neonGreenStyle);
+    }
+
+    // Force the widget to repaint itself
+    ui->Slider_SelectSaltAmount->repaint();
+
     // Debug
-    qDebug() << "Updated saltAmount: " << saltAmount;
+    // qDebug() << "Updated saltAmount: " << saltAmount;
 }
 
 //=========================================================================
@@ -151,7 +208,7 @@ void MainWindow::onButtonUploadHashesClicked()
         ui->list_UploadedHashlists->addItem(QFileInfo(filePath).fileName());
         
         // Print the filename and path to debug console
-        qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
+        // qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
     }
 }
 
@@ -172,7 +229,7 @@ void MainWindow::onButtonRemoveHashesClicked()
         HashesFilesMap.erase(itemText.toUtf8().constData());
 
         // Print the item text to debug console
-        qDebug() << "Removed file: " << itemText;
+        // qDebug() << "Removed file: " << itemText;
     }
 }
 
@@ -193,7 +250,7 @@ void MainWindow::onButtonUploadWordlistClicked()
         ui->list_UploadedWordlists->addItem(QFileInfo(filePath).fileName());
         
         // Print the filename and path to debug console
-        qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
+        // qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
     }
 }
 
@@ -214,7 +271,7 @@ void MainWindow::onButtonRemoveWordlistClicked()
         WordlistFilesMap.erase(itemText.toUtf8().constData());
 
         // Print the item text to debug console
-        qDebug() << "Removed file: " << itemText;
+        // qDebug() << "Removed file: " << itemText;
     }
 }
 

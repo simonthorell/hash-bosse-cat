@@ -32,6 +32,10 @@ private:
     HashAlgorithm hashingAlgorithm;
     int saltAmount;
 
+    // UI variables
+    QString greyStyle;
+    QString neonGreenStyle;
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -40,7 +44,7 @@ public:
     void styleGUI(QApplication& app);
 
 private slots:
-    void on_graphicsView_rubberBandChanged(const QRect &viewportRect, const QPointF &fromScenePoint, const QPointF &toScenePoint);
+    // void on_graphicsView_rubberBandChanged(const QRect &viewportRect, const QPointF &fromScenePoint, const QPointF &toScenePoint);
 
     // UI Input Fields
     void setSingleHashFromInput();
