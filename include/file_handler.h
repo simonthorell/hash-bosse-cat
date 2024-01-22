@@ -4,6 +4,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 class FileHandler {
 private:
@@ -13,6 +14,7 @@ public:
     FileHandler(size_t chunkSize);
 
     // Public Methods
+    size_t countFilesLinesInMap(const std::unordered_map<std::string, std::string>& filesMap);
     std::set<std::string> readHashesFromFile(const std::string& filename);
     std::vector<std::string> readStringsFromFile(const std::string& filename, size_t &linesRead);
 };

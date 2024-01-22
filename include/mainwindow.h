@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QMap>
+#include <unordered_map>
 #include <QString>
 
 
@@ -17,15 +17,15 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 private:
     // Define a variable to hold a single hash
-    QString singleHash;
+    std::string singleHash;
 
     // Define a map to store the file names and paths
 
-    QMap<QString, QString> HashesFilesMap;
-    QMap<QString, QString> WordlistFilesMap;
+    std::unordered_map<std::string, std::string> HashesFilesMap;
+    std::unordered_map<std::string, std::string> WordlistFilesMap;
 
     // Selected Hashing Algorithm & Salt Amount
-    QString HashingAlgorithm;
+    std::string hashingAlgorithm;
     int saltAmount;
 
 public:

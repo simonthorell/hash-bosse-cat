@@ -11,6 +11,24 @@
 FileHandler::FileHandler(size_t chunkSize) : chunkSize(chunkSize) {}
 
 //=============================================================================
+// Public Method: countFilesLinesInMap
+// Description: This method counts the number of lines in all files in a map
+//              and returns the total number of lines.
+//=============================================================================
+size_t FileHandler::countFilesLinesInMap(const std::unordered_map<std::string, std::string>& filesMap) {
+    size_t totalLines = 0;
+    for (auto const& [key, val] : filesMap) {
+        std::ifstream file(val);
+        std::string line;
+        while (std::getline(file, line)) {
+            totalLines++;
+        }
+        file.close();
+    }
+    return totalLines;
+}
+
+//=============================================================================
 // Public Methods: readHashesFromFile, readStringsFromFile
 // Description: These methods read hashes or strings from a file and return
 //              them in a set or vector respectively.

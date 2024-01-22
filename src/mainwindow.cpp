@@ -1,9 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QDebug>      // Debug
 #include <QPixmap>     // Add Image
 #include <QFileDialog> // File Dialog
 #include <QMessageBox> // Pop-up Window
+#include <QFile>
+
+#include <set>         // std::set
+
+#include "file_handler.h"        // FileHandler
+#include "wordlist_processor.h" // WordlistProcessor
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,7 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
     singleHash = "";
     HashesFilesMap.clear();
     WordlistFilesMap.clear();
-    HashingAlgorithm = "MD5"; // Default Hashing Algorithm
+    hashingAlgorithm = "MD5"; // Default Hashing Algorithm
+    saltAmount = 0;           // Default Salt Amount
 
     // Load the app logo image
     QPixmap pix("assets/black_bosse.png");
@@ -99,13 +107,13 @@ void MainWindow::on_graphicsView_rubberBandChanged(const QRect &viewportRect, co
 void MainWindow::setSingleHashFromInput()
 {   
     // Get the text from the Input_SingleHash QLineEdit
-    singleHash = ui->Input_SingleHash->text();
+    singleHash = ui->Input_SingleHash->text().toUtf8().constData();
 }
 
 void MainWindow::setHashingAlgorithm(int index)
 {
     // Get the text from the combo_HashingAlgorithm QComboBox
-    HashingAlgorithm = ui->comboBox_SelectHashAlgo->itemText(index);
+    hashingAlgorithm = ui->comboBox_SelectHashAlgo->itemText(index).toUtf8().constData();
 }
 
 void MainWindow::setSaltAmount(int value)
@@ -125,37 +133,103 @@ void MainWindow::onButtonUploadHashesClicked()
     // Open a file dialog for hashes to crack.
     QString filePath = QFileDialog::getOpenFileName(this, "Select Hashes File", "", "Text Files (*.txt)");
     if (!filePath.isEmpty()) {
-        // Add the file name and path to the map
-        HashesFilesMap[QFileInfo(filePath).fileName()] = filePath;
+        // Convert QString to std::string
+        std::string fileNameStd = QFileInfo(filePath).fileName().toUtf8().constData();
+        std::string filePathStd = filePath.toUtf8().constData();
+
+        // Add the file name and path to the std::unordered_map
+        HashesFilesMap[fileNameStd] = filePathStd;
 
         // Add the file name to the QListWidget
         ui->list_UploadedHashlists->addItem(QFileInfo(filePath).fileName());
         
         // Print the filename and path to debug console
-        // qDebug() << "Added file: " << QFileInfo(filePath).fileName() << " Path: " << filePath;
+        qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
     }
 }
+
 
 void MainWindow::onButtonUploadWordlistClicked()
 {
     // Open a file dialog for wordlist to use.
     QString filePath = QFileDialog::getOpenFileName(this, "Select Wordlist File", "", "Text Files (*.txt)");
     if (!filePath.isEmpty()) {
-        // Add the file name and path to the map
-        WordlistFilesMap[QFileInfo(filePath).fileName()] = filePath;
+        // Convert QString to std::string
+        std::string fileNameStd = QFileInfo(filePath).fileName().toUtf8().constData();
+        std::string filePathStd = filePath.toUtf8().constData();
+
+        // Add the file name and path to the std::unordered_map
+        WordlistFilesMap[fileNameStd] = filePathStd;
 
         // Add the file name to the QListWidget
         ui->list_UploadedWordlists->addItem(QFileInfo(filePath).fileName());
         
         // Print the filename and path to debug console
-        qDebug() << "Added file: " << QFileInfo(filePath).fileName() << " Path: " << filePath;
+        qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
     }
 }
 
 void MainWindow::onButtonCrackHashesClicked()
 {
+    int chunkSize = 1000; // TODO: Make this a user input field?
+    FileHandler fileHandler(chunkSize);
+    size_t totalHashesLines = fileHandler.countFilesLinesInMap(HashesFilesMap);
+    size_t totalWordlistLines = fileHandler.countFilesLinesInMap(WordlistFilesMap);
+
+    while(!HashesFilesMap.empty()) {
+        // Get the first element in the map
+        auto it = HashesFilesMap.begin();
+        auto wl = WordlistFilesMap.begin();
+        // QMessageBox::information(this, "Cracking Hashes", "Cracking the hashes in: " + QString::fromStdString(it->first));
+
+        // Get the file name and path
+        std::string fileName = it->first;
+        std::string filePath = it->second;
+
+        std::string wlName = wl->first;
+        std::string wlPath = wl->second;
+        QMessageBox::information(this, "Cracking Hashes", "Cracking the hashes in: " + QString::fromStdString(fileName) + "\nUsing wordlist: " + QString::fromStdString(wlName));
+
+        std::set hashSet = fileHandler.readHashesFromFile(filePath);
+        // QMessageBox::information(this, "Cracking Hashes", "Read " + QString::number(hashSet.size()) + " hashes from file: " + QString::fromStdString(fileName));
+
+        // Crack the hashes
+        WordlistProcessor processor(fileHandler, hashSet, HashAlgorithm::MD5, 0, saltAmount);
+        bool readyForNextBatch = processor.compareWordlistChunk(wlPath);
+        if (readyForNextBatch) {
+            QMessageBox::information(this, "Cracking Hashes", "Finished cracking hashes in: " + QString::fromStdString(fileName));
+        } else {
+            QMessageBox::information(this, "Cracking Hashes", "Finished cracking hashes in: " + QString::fromStdString(fileName) + "\nNot ready for next batch.");
+        }
+
+        // Remove the file from the map
+        HashesFilesMap.erase(it);
+
+        // Add to the crackedHashes qt list which file was cracked
+        // ui->list_crackedHashes->addItem(QString::fromStdString(fileName));
+
+        ui->list_crackedHashes->clear();
+        for (const auto& pair : processor.crackedHashes) {
+            // Convert std::string to QString
+            QString hash = QString::fromStdString(pair.first);
+            QString password = QString::fromStdString(pair.second);
+
+            // Create the display string for the QListWidgetItem
+            QString displayText = hash + " : " + password;
+
+            // Add the item to the list
+            ui->list_crackedHashes->addItem(displayText);
+        }
+    }
+
+    // TODO: Display a success message and ask to save the results to a file
+
     // Display the QString in a QMessageBox
-    QMessageBox::information(this, "Single Hash", "The single hash is: " + singleHash 
-                                                + "\nHashing Algorithm: " + HashingAlgorithm 
-                                                + "\nSalt Amount: " + QString::number(saltAmount));
+    QMessageBox::information(this, "Single Hash", "The single hash is: " + QString::fromStdString(singleHash)
+                                                + "\nHashing Algorithm: " + QString::fromStdString(hashingAlgorithm)
+                                                + "\nSalt Amount: " + QString::number(saltAmount)
+                                                + "\nTotal Hashes Lines: " + QString::number(totalHashesLines)
+                                                + "\nTotal Wordlist Lines: " + QString::number(totalWordlistLines)
+                                                );
+
 }

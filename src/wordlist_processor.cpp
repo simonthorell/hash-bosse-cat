@@ -9,18 +9,23 @@
 #include <ranges>
 #include <algorithm>
 #include <execution>
+#include <iostream>
 
 //=====================================================================
 // Constructor: HashComparator
 // Description: This constructor creates a HashComparator object.
 //=====================================================================
 WordlistProcessor::WordlistProcessor(const FileHandler& fileHandler, 
-                               const std::set<std::string>& hashSet,
-                               HashAlgorithm algorithm,
-                               int numberOfVariants,
-                               int saltLength)
-: fileHandler(fileHandler), hashSet(hashSet) {}
-
+                                     const std::set<std::string>& hashSet,
+                                     HashAlgorithm algorithm,
+                                     int numberOfVariants,
+                                     int saltLength)
+    : fileHandler(fileHandler), hashSet(hashSet), hashAlgorithm(algorithm), 
+      numberOfVariants(numberOfVariants), saltLength(saltLength) {
+    // std::cout << "Constructor - hashAlgorithm: " << static_cast<int>(hashAlgorithm) << std::endl;
+    // std::cout << "Constructor - numberOfVariants: " << numberOfVariants << std::endl;
+    // std::cout << "Constructor - saltLength: " << saltLength << std::endl;
+}
 //=====================================================================
 // Method: compareWordlistChunk
 // Description: This method compares a chunk of strings with the hashSet
@@ -33,16 +38,18 @@ bool WordlistProcessor::compareWordlistChunk(const std::string& filename) {
     if (linesRead == 0) {
         return false; // No more lines to read
     }
-    
+
     // Process each string in parallel & compare to hashSet (hashes to crack)
     std::for_each(std::execution::par, strings.begin(), strings.end(), 
-                  [&](const std::string& str) {
+                [&](const std::string& str) {
         // Vector of salted & hashed variants of each string from wordlist
         auto hashedVariants = processString(str);
         // Compare each hashed variant to the hashSet
-        for (auto& [str, hashedStr] : hashedVariants) {
+        for (auto& [originalStr, hashedStr] : hashedVariants) {
+            std::cout << "Comparing: " << originalStr << " to " << hashedStr << std::endl;
             if (hashSet.find(hashedStr) != hashSet.end()) { // Binary search set
-                crackedHashes[hashedStr] = str; // Handle cracked hash
+                std::cout << "Found match: " << originalStr << " to " << hashedStr << std::endl;
+                crackedHashes[hashedStr] = originalStr; // Handle cracked hash
                 // Hash = key, String = value
             }
         }
