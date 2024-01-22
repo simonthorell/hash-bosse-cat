@@ -49,7 +49,9 @@ private slots:
 
     // UI Buttons
     void onButtonUploadHashesClicked();
+    void onButtonRemoveHashesClicked();
     void onButtonUploadWordlistClicked();
+    void onButtonRemoveWordlistClicked();
     void onButtonCrackHashesClicked();
 
 private:

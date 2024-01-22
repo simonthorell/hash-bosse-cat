@@ -54,9 +54,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Connect the button's clicked() signal to the slots
     connect(ui->Button_UploadHashes, SIGNAL(clicked()), this, SLOT(onButtonUploadHashesClicked()));
+    connect(ui->Button_RemoveHashes, SIGNAL(clicked()), this, SLOT(onButtonRemoveHashesClicked()));
     connect(ui->Button_UploadWordlist, SIGNAL(clicked()), this, SLOT(onButtonUploadWordlistClicked()));
+    connect(ui->Button_RemoveWordlist, SIGNAL(clicked()), this, SLOT(onButtonRemoveWordlistClicked()));
     connect(ui->Button_CrackHashes, SIGNAL(clicked()), this, SLOT(onButtonCrackHashesClicked()));
-}   
+}
 
 void MainWindow::styleGUI(QApplication& app) {
     // Dark color palette
@@ -153,6 +155,27 @@ void MainWindow::onButtonUploadHashesClicked()
     }
 }
 
+void MainWindow::onButtonRemoveHashesClicked()
+{
+    // Get the selected item from the QListWidget
+    QListWidgetItem* item = ui->list_UploadedHashlists->currentItem();
+
+    // Check if an item is selected
+    if (item) {
+        // Get the item text
+        QString itemText = item->text();
+
+        // Remove the item from the QListWidget
+        ui->list_UploadedHashlists->takeItem(ui->list_UploadedHashlists->row(item));
+
+        // Remove the item from the std::unordered_map
+        HashesFilesMap.erase(itemText.toUtf8().constData());
+
+        // Print the item text to debug console
+        qDebug() << "Removed file: " << itemText;
+    }
+}
+
 
 void MainWindow::onButtonUploadWordlistClicked()
 {
@@ -171,6 +194,27 @@ void MainWindow::onButtonUploadWordlistClicked()
         
         // Print the filename and path to debug console
         qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
+    }
+}
+
+void MainWindow::onButtonRemoveWordlistClicked()
+{
+    // Get the selected item from the QListWidget
+    QListWidgetItem* item = ui->list_UploadedWordlists->currentItem();
+
+    // Check if an item is selected
+    if (item) {
+        // Get the item text
+        QString itemText = item->text();
+
+        // Remove the item from the QListWidget
+        ui->list_UploadedWordlists->takeItem(ui->list_UploadedWordlists->row(item));
+
+        // Remove the item from the std::unordered_map
+        WordlistFilesMap.erase(itemText.toUtf8().constData());
+
+        // Print the item text to debug console
+        qDebug() << "Removed file: " << itemText;
     }
 }
 
