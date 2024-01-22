@@ -80,6 +80,15 @@
     "stop_token": "cpp",
     "*.ui": "xml",
     "*.qrc": "xml",
-    "qapplication": "cpp"
+    "qapplication": "cpp",
+    "map": "cpp",
+    "qmessagebox": "cpp",
+    "__tree": "cpp",
+    "any": "cpp",
+    "forward_list": "cpp",
+    "fstream": "cpp",
+    "list": "cpp",
+    "set": "cpp",
+    "unordered_set": "cpp"
 },
 }

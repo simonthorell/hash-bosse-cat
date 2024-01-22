@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.28.1)
 project(MyProject VERSION 0.1 LANGUAGES CXX)
 
 # Specify the C++ standard

@@ -1,13 +1,21 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QPixmap>    // Add Image
+#include <QPixmap>     // Add Image
+#include <QFileDialog> // File Dialog
+#include <QMessageBox> // Pop-up Window
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    // Initialize class variables
+    singleHash = "";
+    HashesFilesMap.clear();
+    WordlistFilesMap.clear();
+    HashingAlgorithm = "MD5"; // Default Hashing Algorithm
 
     // Load the app logo image
     QPixmap pix("assets/black_bosse.png");
@@ -34,7 +42,18 @@ MainWindow::MainWindow(QWidget *parent)
     QPalette palette = logoText->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     logoText->setPalette(palette);
-}
+
+    // set InputFileds
+    connect(ui->Input_SingleHash, &QLineEdit::textChanged, this, &MainWindow::setSingleHashFromInput);
+    connect(ui->comboBox_SelectHashAlgo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        this, &MainWindow::setHashingAlgorithm);
+    connect(ui->Slider_SelectSaltAmount, &QSlider::valueChanged, this, &MainWindow::setSaltAmount);
+
+    // Connect the button's clicked() signal to the slots
+    connect(ui->Button_UploadHashes, SIGNAL(clicked()), this, SLOT(onButtonUploadHashesClicked()));
+    connect(ui->Button_UploadWordlist, SIGNAL(clicked()), this, SLOT(onButtonUploadWordlistClicked()));
+    connect(ui->Button_CrackHashes, SIGNAL(clicked()), this, SLOT(onButtonCrackHashesClicked()));
+}   
 
 void MainWindow::styleGUI(QApplication& app) {
     // Dark color palette
@@ -69,4 +88,72 @@ MainWindow::~MainWindow()
 void MainWindow::on_graphicsView_rubberBandChanged(const QRect &viewportRect, const QPointF &fromScenePoint, const QPointF &toScenePoint)
 {
 
+}
+
+//=========================================================================
+// UI Input Fields
+//=========================================================================
+
+void MainWindow::setSingleHashFromInput()
+{   
+    // Get the text from the Input_SingleHash QLineEdit
+    singleHash = ui->Input_SingleHash->text();
+}
+
+void MainWindow::setHashingAlgorithm(int index)
+{
+    // Get the text from the combo_HashingAlgorithm QComboBox
+    HashingAlgorithm = ui->comboBox_SelectHashAlgo->itemText(index);
+}
+
+void MainWindow::setSaltAmount(int value)
+{
+    saltAmount = value;
+
+    // Debug
+    qDebug() << "Updated saltAmount: " << saltAmount;
+}
+
+//=========================================================================
+// UI Buttons
+//=========================================================================
+
+void MainWindow::onButtonUploadHashesClicked()
+{
+    // Open a file dialog for hashes to crack.
+    QString filePath = QFileDialog::getOpenFileName(this, "Select Hashes File", "", "Text Files (*.txt)");
+    if (!filePath.isEmpty()) {
+        // Add the file name and path to the map
+        HashesFilesMap[QFileInfo(filePath).fileName()] = filePath;
+
+        // Add the file name to the QListWidget
+        ui->list_UploadedHashlists->addItem(QFileInfo(filePath).fileName());
+        
+        // Print the filename and path to debug console
+        // qDebug() << "Added file: " << QFileInfo(filePath).fileName() << " Path: " << filePath;
+    }
+}
+
+void MainWindow::onButtonUploadWordlistClicked()
+{
+    // Open a file dialog for wordlist to use.
+    QString filePath = QFileDialog::getOpenFileName(this, "Select Wordlist File", "", "Text Files (*.txt)");
+    if (!filePath.isEmpty()) {
+        // Add the file name and path to the map
+        WordlistFilesMap[QFileInfo(filePath).fileName()] = filePath;
+
+        // Add the file name to the QListWidget
+        ui->list_UploadedWordlists->addItem(QFileInfo(filePath).fileName());
+        
+        // Print the filename and path to debug console
+        qDebug() << "Added file: " << QFileInfo(filePath).fileName() << " Path: " << filePath;
+    }
+}
+
+void MainWindow::onButtonCrackHashesClicked()
+{
+    // Display the QString in a QMessageBox
+    QMessageBox::information(this, "Single Hash", "The single hash is: " + singleHash 
+                                                + "\nHashing Algorithm: " + HashingAlgorithm 
+                                                + "\nSalt Amount: " + QString::number(saltAmount));
 }

@@ -14,9 +14,10 @@
                 "/Library/Frameworks",
                 "/Users/simonthorell/Qt/6.6.1/macos/lib"
             ],
+            "compilerPath": "/usr/local/bin/gcc-13",
             "cStandard": "c17",
             "cppStandard": "c++20",
-            "intelliSenseMode": "macos-clang-x64"
+            "intelliSenseMode": "gcc-arm64"
         }
     ],
     "version": 4
