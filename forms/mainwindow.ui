@@ -30,12 +30,25 @@
      <rect>
       <x>410</x>
       <y>90</y>
-      <width>151</width>
+      <width>120</width>
       <height>32</height>
      </rect>
     </property>
     <property name="text">
      <string>Upload Wordlists</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Button_RemoveWordlist">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>90</y>
+      <width>80</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Remove</string>
     </property>
    </widget>
    <widget class="QListWidget" name="list_UploadedWordlists">
@@ -53,12 +66,25 @@
      <rect>
       <x>20</x>
       <y>90</y>
-      <width>211</width>
+      <width>120</width>
       <height>32</height>
      </rect>
     </property>
     <property name="text">
-     <string>Upload Password Hashes</string>
+     <string>Upload Hashes</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Button_RemoveHashes">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>90</y>
+      <width>80</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Remove</string>
     </property>
    </widget>
    <widget class="QListWidget" name="list_UploadedHashlists">
