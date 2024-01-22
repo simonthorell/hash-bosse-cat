@@ -176,9 +176,11 @@ void MainWindow::onButtonCrackHashesClicked()
     size_t totalHashesLines = fileHandler.countFilesLinesInMap(HashesFilesMap);
     size_t totalWordlistLines = fileHandler.countFilesLinesInMap(WordlistFilesMap);
 
-    while(!HashesFilesMap.empty()) {
+    std::unordered_map TempHashedFilesMap = HashesFilesMap;
+
+    while(!TempHashedFilesMap.empty()) {
         // Get the first element in the map
-        auto it = HashesFilesMap.begin();
+        auto it = TempHashedFilesMap.begin();
         auto wl = WordlistFilesMap.begin();
         // QMessageBox::information(this, "Cracking Hashes", "Cracking the hashes in: " + QString::fromStdString(it->first));
 
@@ -188,7 +190,6 @@ void MainWindow::onButtonCrackHashesClicked()
 
         std::string wlName = wl->first;
         std::string wlPath = wl->second;
-        QMessageBox::information(this, "Cracking Hashes", "Cracking the hashes in: " + QString::fromStdString(fileName) + "\nUsing wordlist: " + QString::fromStdString(wlName));
 
         std::set hashSet = fileHandler.readHashesFromFile(filePath);
         // QMessageBox::information(this, "Cracking Hashes", "Read " + QString::number(hashSet.size()) + " hashes from file: " + QString::fromStdString(fileName));
@@ -196,14 +197,9 @@ void MainWindow::onButtonCrackHashesClicked()
         // Crack the hashes
         WordlistProcessor processor(fileHandler, hashSet, HashAlgorithm::MD5, 0, saltAmount);
         bool readyForNextBatch = processor.compareWordlistChunk(wlPath);
-        if (readyForNextBatch) {
-            QMessageBox::information(this, "Cracking Hashes", "Finished cracking hashes in: " + QString::fromStdString(fileName));
-        } else {
-            QMessageBox::information(this, "Cracking Hashes", "Finished cracking hashes in: " + QString::fromStdString(fileName) + "\nNot ready for next batch.");
-        }
 
         // Remove the file from the map
-        HashesFilesMap.erase(it);
+        TempHashedFilesMap.erase(it);
 
         // Add to the crackedHashes qt list which file was cracked
         // ui->list_crackedHashes->addItem(QString::fromStdString(fileName));
@@ -225,11 +221,11 @@ void MainWindow::onButtonCrackHashesClicked()
     // TODO: Display a success message and ask to save the results to a file
 
     // Display the QString in a QMessageBox
-    QMessageBox::information(this, "Single Hash", "The single hash is: " + QString::fromStdString(singleHash)
-                                                + "\nHashing Algorithm: " + QString::fromStdString(hashingAlgorithm)
-                                                + "\nSalt Amount: " + QString::number(saltAmount)
-                                                + "\nTotal Hashes Lines: " + QString::number(totalHashesLines)
-                                                + "\nTotal Wordlist Lines: " + QString::number(totalWordlistLines)
-                                                );
+    // QMessageBox::information(this, "Single Hash", "The single hash is: " + QString::fromStdString(singleHash)
+    //                                             + "\nHashing Algorithm: " + QString::fromStdString(hashingAlgorithm)
+    //                                             + "\nSalt Amount: " + QString::number(saltAmount)
+    //                                             + "\nTotal Hashes Lines: " + QString::number(totalHashesLines)
+    //                                             + "\nTotal Wordlist Lines: " + QString::number(totalWordlistLines)
+    //                                             );
 
 }
