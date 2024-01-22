@@ -178,62 +178,60 @@ void MainWindow::onButtonCrackHashesClicked()
 {
     ui->list_crackedHashes->clear(); // Clear the cracked hashes list
 
-    int chunkSize = 1000; // TODO: Make this a user input field?
+    int chunkSize = 50; // TODO: Make this a user input field?
     FileHandler fileHandler(chunkSize);
-    size_t totalHashesLines = fileHandler.countFilesLinesInMap(HashesFilesMap);
+    size_t totalHashesLines = singleHash.empty() ? fileHandler.countFilesLinesInMap(HashesFilesMap) : 1;
     size_t totalWordlistLines = fileHandler.countFilesLinesInMap(WordlistFilesMap);
 
     // Create a set to keep track of cracked hashes to avoid duplicates
     std::set<std::string> crackedHashSet;
 
-    // Iterate over each wordlist file in WordlistFilesMap
-    for (const auto& wlEntry : WordlistFilesMap) {
-        // Get the wordlist file name and path
-        std::string wlName = wlEntry.first;
-        std::string wlPath = wlEntry.second;
+    // Create a hash set for processing
+    std::set<std::string> hashSet;
 
-        // Iterate over each hashed file in HashesFilesMap
+    if (!singleHash.empty()) {
+        // If singleHash is not empty, use only the singleHash for processing
+        hashSet.insert(singleHash);
+    } else {
+        // If singleHash is empty, read hashes from files in HashesFilesMap
         for (const auto& hashEntry : HashesFilesMap) {
             // Get the hashed file name and path
-            std::string fileName = hashEntry.first;
             std::string filePath = hashEntry.second;
 
-            // Read the hash set from the hashed file
-            std::set<std::string> hashSet = fileHandler.readHashesFromFile(filePath);
+            // Merge the hashes from the file into hashSet
+            std::set<std::string> fileHashSet = fileHandler.readHashesFromFile(filePath);
+            hashSet.insert(fileHashSet.begin(), fileHashSet.end());
+        }
+    }
 
-            // Crack the hashes
-            WordlistProcessor processor(fileHandler, hashSet, hashingAlgorithm, 0, saltAmount);
-            bool readyForNextBatch = processor.compareWordlistChunk(wlPath);
+    // Process the hashes in hashSet against each wordlist in WordlistFilesMap
+    for (const auto& wlEntry : WordlistFilesMap) {
+        // Get the wordlist file name and path
+        std::string wlPath = wlEntry.second;
 
-            // Add cracked hashes to the set
-            for (const auto& pair : processor.crackedHashes) {
-                const std::string& hash = pair.first;
-                // Check if the hash is not a duplicate
-                if (crackedHashSet.find(hash) == crackedHashSet.end()) {
-                    crackedHashSet.insert(hash);
+        // Crack the hashes
+        WordlistProcessor processor(fileHandler, hashSet, hashingAlgorithm, 0, saltAmount);
+        bool readyForNextBatch = processor.compareWordlistChunk(wlPath);
 
-                    // Convert std::string to QString
-                    QString password = QString::fromStdString(pair.second);
+        // Add cracked hashes to the set
+        for (const auto& pair : processor.crackedHashes) {
+            const std::string& hash = pair.first;
+            // Check if the hash is not a duplicate
+            if (crackedHashSet.find(hash) == crackedHashSet.end()) {
+                crackedHashSet.insert(hash);
 
-                    // Create the display string for the QListWidgetItem
-                    QString displayText = QString::fromStdString(hash) + ": " + password;
+                // Convert std::string to QString
+                QString password = QString::fromStdString(pair.second);
 
-                    // Add the item to the list
-                    ui->list_crackedHashes->addItem(displayText);
-                }
+                // Create the display string for the QListWidgetItem
+                QString displayText = QString::fromStdString(hash) + ": " + password;
+
+                // Add the item to the list
+                ui->list_crackedHashes->addItem(displayText);
             }
         }
     }
 
-    QMessageBox::information(this, "Cracked" , "Cracked " + QString::number(crackedHashSet.size()) + " out of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
+    QMessageBox::information(this, "Cracked", "Cracked " + QString::number(crackedHashSet.size()) + " out of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
     // TODO: Ask user to save result in a file
-
-    // Display the QString in a QMessageBox
-    // QMessageBox::information(this, "Single Hash", "The single hash is: " + QString::fromStdString(singleHash)
-    //                                             + "\nHashing Algorithm: " + QString::fromStdString(hashingAlgorithm)
-    //                                             + "\nSalt Amount: " + QString::number(saltAmount)
-    //                                             + "\nTotal Hashes Lines: " + QString::number(totalHashesLines)
-    //                                             + "\nTotal Wordlist Lines: " + QString::number(totalWordlistLines)
-    //                                             );
-
 }

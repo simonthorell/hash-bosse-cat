@@ -46,9 +46,9 @@ bool WordlistProcessor::compareWordlistChunk(const std::string& filename) {
         auto hashedVariants = processString(str);
         // Compare each hashed variant to the hashSet
         for (auto& [originalStr, hashedStr] : hashedVariants) {
-            std::cout << "Comparing: " << originalStr << " to " << hashedStr << std::endl;
+            // std::cout << "Comparing: " << originalStr << " to " << hashedStr << std::endl;
             if (hashSet.find(hashedStr) != hashSet.end()) { // Binary search set
-                std::cout << "Found match: " << originalStr << " to " << hashedStr << std::endl;
+                // std::cout << "Found match: " << originalStr << " to " << hashedStr << std::endl;
                 crackedHashes[hashedStr] = originalStr; // Handle cracked hash
                 // Hash = key, String = value
             }
