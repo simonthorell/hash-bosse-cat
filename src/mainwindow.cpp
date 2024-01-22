@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     palette.setColor(QPalette::WindowText, Qt::white);
     logoText->setPalette(palette);
 
-    // set InputFileds
+    // Connect the UI InputFields to the slots
     connect(ui->Input_SingleHash, &QLineEdit::textChanged, this, &MainWindow::setSingleHashFromInput);
     connect(ui->comboBox_SelectHashAlgo, QOverload<int>::of(&QComboBox::currentIndexChanged),
         this, &MainWindow::setHashingAlgorithm);
@@ -75,9 +75,11 @@ void MainWindow::styleGUI(QApplication& app) {
     app.setPalette(darkPalette);
 
     // STYLE SHEET FOR QCOMBOBOX
-    app.setStyleSheet("QComboBox { background-color: #303030; color: white; }");
-    app.setStyleSheet("QToolTip { color: #ffffff; background-color: #000000; border: 1px solid white; }");
-    app.setStyleSheet("QPushButton { background-color: #303030; color: white; }");
+    app.setStyleSheet(
+        "QComboBox { background-color: #303030; color: white; }"
+        "QToolTip { color: #ffffff; background-color: #000000; border: 1px solid white; }"
+        "QPushButton { background-color: #303030; color: white; }"
+    );
 }
 
 MainWindow::~MainWindow()
