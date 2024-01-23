@@ -44,9 +44,11 @@ elseif(APPLE)
 
     #Executable for macOS - build/src/MyProject.app
     add_executable(HashBosseCat MACOSX_BUNDLE ${SOURCES} ${RESOURCE_ADDED})
+
     set_target_properties(HashBosseCat PROPERTIES
-                        MACOSX_BUNDLE_ICON_FILE icons/favicon.icns
-                        RESOURCE "${RESOURCES}")
+                          MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/resources/Info.plist.in
+                          MACOSX_BUNDLE_ICON_FILE icons/favicon.icns
+                          RESOURCE "${RESOURCES}")
 elseif(UNIX)
     add_executable(${CMAKE_PROJECT_NAME} main.cpp ${SOURCES} ${RESOURCE_ADDED})
 endif()
