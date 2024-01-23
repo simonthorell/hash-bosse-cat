@@ -337,7 +337,7 @@ void MainWindow::onButtonCrackHashesClicked()
                 // Convert std::string to QString
                 QString password = QString::fromStdString(pair.second);
                 // Create the display string for the QListWidgetItem
-                QString displayText = QString::fromStdString(hash) + ": " + password;
+                QString displayText = QString::fromStdString(hash) + "  ::  " + password;
                 // Add the item to the list
                 ui->list_crackedHashes->addItem(displayText);
             }
@@ -349,6 +349,6 @@ void MainWindow::onButtonCrackHashesClicked()
         setProgressBarValue(progressPercentage);
     }
 
-    QMessageBox::information(this, "Cracked", "Cracked " + QString::number(crackedHashSet.size()) + " out of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
+    QMessageBox::information(this, "Cracked", "Bosse cracked " + QString::number(crackedHashSet.size()) + " of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
     // TODO: Ask user to save result in a file
 }
