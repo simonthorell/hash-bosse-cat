@@ -3,12 +3,11 @@
 
 #include <QMainWindow>
 #include <QString>
-
 #include <unordered_map>
-#include <set>         // std::set
+#include <set>
 
-#include "file_handler.h"        // FileHandler
-#include "wordlist_processor.h" // WordlistProcessor
+#include "file_handler.h"
+#include "wordlist_processor.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,36 +19,29 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 private:
-    // Define a variable to hold a single hash
     std::string singleHash;
-
-    // Define a map to store the file names and paths
-
     std::unordered_map<std::string, std::string> HashesFilesMap;
     std::unordered_map<std::string, std::string> WordlistFilesMap;
-
-    // Selected Hashing Algorithm & Salt Amount
     HashAlgorithm hashingAlgorithm;
     int saltAmount;
-
-    // UI variables
+    // UI style variables
     QString greyStyle;
     QString neonGreenStyle;
 
 public:
+    // Constructor and Destructor
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    // Style GUI
+    // Style GUI (call this after creating a new MainWindow object)
     void styleGUI(QApplication& app);
 
 private slots:
-    // void on_graphicsView_rubberBandChanged(const QRect &viewportRect, const QPointF &fromScenePoint, const QPointF &toScenePoint);
-
     // UI Input Fields
     void setSingleHashFromInput();
     void setHashingAlgorithm(int index); 
     void setSaltAmount(int index);
+    void setProgressBarValue(int progressPercentage);
 
     // UI Buttons
     void onButtonUploadHashesClicked();

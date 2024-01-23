@@ -49,10 +49,6 @@ MainWindow::MainWindow(QWidget *parent)
     palette.setColor(QPalette::WindowText, Qt::white);
     logoText->setPalette(palette);
 
-    // // Initialize slider value from saltAmount variable
-    // ui->Slider_SelectSaltAmount->setValue(saltAmount);
-    // setSaltAmount(saltAmount);
-
     // Connect the UI InputFields to the slots
     connect(ui->Input_SingleHash, &QLineEdit::textChanged, this, &MainWindow::setSingleHashFromInput);
     connect(ui->comboBox_SelectHashAlgo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -89,12 +85,26 @@ void MainWindow::styleGUI(QApplication& app) {
     
     app.setPalette(darkPalette);
 
-    // STYLE SHEET FOR QCOMBOBOX
     app.setStyleSheet(
+        // STYLE SHEET FOR QCOMBOBOX
         "QComboBox { background-color: #303030; color: white; }"
         "QToolTip { color: #ffffff; background-color: #000000; border: 1px solid white; }"
         "QPushButton { background-color: #303030; color: white; }"
+        // STYLE SHEET FOR PROGRESS BAR
+         "QProgressBar {"
+        "    border: 2px solid grey;"
+        "    border-radius: 5px;"
+        "    background-color: #f0f0f0;"  // Light grey background
+        "}"
+        "QProgressBar::chunk {"
+        "    background-color: rgba(57, 255, 20, 128);"  // 50% transparent neon green
+        "    width: 10px;"  // Width of the 'chunk'
+        "    margin: 0.5px;"  // Optional: add slight spacing between chunks
+        "}"
     );
+
+    // Set the initial value of the progress bar to 0%
+    setProgressBarValue(0);
 
     // STYLE SHEET FOR QSLIDER
     greyStyle = "QSlider::groove:horizontal {"
@@ -126,7 +136,7 @@ void MainWindow::styleGUI(QApplication& app) {
                     "    border-radius: 3px;"  // Handle border radius
                     "}"
                     "QSlider::sub-page:horizontal {"
-                    "    background: #3339FF14;"  // Neon green color for the filled part of the groove
+                    "    background: rgb(42, 130, 218);"  // Neon green color for the filled part of the groove
                     "}";
 
     // Initialize slider value from saltAmount variable
@@ -139,11 +149,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-// void MainWindow::on_graphicsView_rubberBandChanged(const QRect &viewportRect, const QPointF &fromScenePoint, const QPointF &toScenePoint)
-// {
-
-// }
 
 //=========================================================================
 // UI Input Fields
@@ -188,6 +193,15 @@ void MainWindow::setSaltAmount(int value)
     // qDebug() << "Updated saltAmount: " << saltAmount;
 }
 
+void MainWindow::setProgressBarValue(int progressPercentage)
+{
+    // Set the progress bar value (10 = 10%)
+    ui->progressBar_CrackProgess->setValue(progressPercentage);
+
+    // Force the widget to repaint itself
+    ui->progressBar_CrackProgess->repaint();
+}
+
 //=========================================================================
 // UI Buttons
 //=========================================================================
@@ -200,14 +214,13 @@ void MainWindow::onButtonUploadHashesClicked()
         // Convert QString to std::string
         std::string fileNameStd = QFileInfo(filePath).fileName().toUtf8().constData();
         std::string filePathStd = filePath.toUtf8().constData();
-
         // Add the file name and path to the std::unordered_map
         HashesFilesMap[fileNameStd] = filePathStd;
-
         // Add the file name to the QListWidget
         ui->list_UploadedHashlists->addItem(QFileInfo(filePath).fileName());
+
+        setProgressBarValue(0); // Reset the progress bar value
         
-        // Print the filename and path to debug console
         // qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
     }
 }
@@ -221,14 +234,13 @@ void MainWindow::onButtonRemoveHashesClicked()
     if (item) {
         // Get the item text
         QString itemText = item->text();
-
         // Remove the item from the QListWidget
         ui->list_UploadedHashlists->takeItem(ui->list_UploadedHashlists->row(item));
-
         // Remove the item from the std::unordered_map
         HashesFilesMap.erase(itemText.toUtf8().constData());
 
-        // Print the item text to debug console
+        setProgressBarValue(0); // Reset the progress bar value
+
         // qDebug() << "Removed file: " << itemText;
     }
 }
@@ -242,14 +254,13 @@ void MainWindow::onButtonUploadWordlistClicked()
         // Convert QString to std::string
         std::string fileNameStd = QFileInfo(filePath).fileName().toUtf8().constData();
         std::string filePathStd = filePath.toUtf8().constData();
-
         // Add the file name and path to the std::unordered_map
         WordlistFilesMap[fileNameStd] = filePathStd;
-
         // Add the file name to the QListWidget
         ui->list_UploadedWordlists->addItem(QFileInfo(filePath).fileName());
+
+        setProgressBarValue(0); // Reset the progress bar value
         
-        // Print the filename and path to debug console
         // qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
     }
 }
@@ -263,14 +274,13 @@ void MainWindow::onButtonRemoveWordlistClicked()
     if (item) {
         // Get the item text
         QString itemText = item->text();
-
         // Remove the item from the QListWidget
         ui->list_UploadedWordlists->takeItem(ui->list_UploadedWordlists->row(item));
-
         // Remove the item from the std::unordered_map
         WordlistFilesMap.erase(itemText.toUtf8().constData());
 
-        // Print the item text to debug console
+        setProgressBarValue(0); // Reset the progress bar value
+
         // qDebug() << "Removed file: " << itemText;
     }
 }
@@ -286,7 +296,6 @@ void MainWindow::onButtonCrackHashesClicked()
 
     // Create a set to keep track of cracked hashes to avoid duplicates
     std::set<std::string> crackedHashSet;
-
     // Create a hash set for processing
     std::set<std::string> hashSet;
 
@@ -298,12 +307,15 @@ void MainWindow::onButtonCrackHashesClicked()
         for (const auto& hashEntry : HashesFilesMap) {
             // Get the hashed file name and path
             std::string filePath = hashEntry.second;
-
             // Merge the hashes from the file into hashSet
             std::set<std::string> fileHashSet = fileHandler.readHashesFromFile(filePath);
             hashSet.insert(fileHashSet.begin(), fileHashSet.end());
         }
     }
+
+    // Progress bar variables
+    int currentIndex = 0; // Initialize a counter for the current index
+    int totalWordlists = WordlistFilesMap.size(); // Get the total number of wordlists
 
     // Process the hashes in hashSet against each wordlist in WordlistFilesMap
     for (const auto& wlEntry : WordlistFilesMap) {
@@ -320,17 +332,19 @@ void MainWindow::onButtonCrackHashesClicked()
             // Check if the hash is not a duplicate
             if (crackedHashSet.find(hash) == crackedHashSet.end()) {
                 crackedHashSet.insert(hash);
-
                 // Convert std::string to QString
                 QString password = QString::fromStdString(pair.second);
-
                 // Create the display string for the QListWidgetItem
                 QString displayText = QString::fromStdString(hash) + ": " + password;
-
                 // Add the item to the list
                 ui->list_crackedHashes->addItem(displayText);
             }
         }
+
+        // Update the progress bar
+        currentIndex++; // Increment the current index
+        int progressPercentage = static_cast<int>(static_cast<double>(currentIndex) / totalWordlists * 100);
+        setProgressBarValue(progressPercentage);
     }
 
     QMessageBox::information(this, "Cracked", "Cracked " + QString::number(crackedHashSet.size()) + " out of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
