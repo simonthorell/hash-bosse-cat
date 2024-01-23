@@ -43,7 +43,6 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 
 # Add the subdirectories
 add_subdirectory(src)
-add_subdirectory(forms)
 add_subdirectory(tests)
 
 # Add compiler options

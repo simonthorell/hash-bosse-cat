@@ -98,7 +98,7 @@ void MainWindow::styleGUI(QApplication& app) {
          "QProgressBar {"
         "    border: 2px solid grey;"
         "    border-radius: 5px;"
-        "    background-color: #f0f0f0;"  // Light grey background
+        "    background-color: grey;"  // Light grey background
         "    text-align: center;"  // Center-align the text
         "    color: black;"  // Set the text color to black
         "}"

@@ -9,12 +9,16 @@
 //              manually.
 //==============================================================================
 #include <QApplication>
+#include <QStyleFactory>
 #include "mainwindow.h"     // GUI
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
+    QApplication::setStyle(QStyleFactory::create("Fusion"));
+
     MainWindow mainWindow;
     mainWindow.styleGUI(app);
     mainWindow.show();
+    
     return app.exec();
 }
