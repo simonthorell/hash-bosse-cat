@@ -49,6 +49,9 @@ private slots:
     void onButtonUploadWordlistClicked();
     void onButtonRemoveWordlistClicked();
     void onButtonCrackHashesClicked();
+    void onButtonCopySelectedHashClicked();
+    void onButtonCopySelectedKeyClicked();
+    void onButtonSaveResultToFileClicked();
 
 private:
     Ui::MainWindow *ui;

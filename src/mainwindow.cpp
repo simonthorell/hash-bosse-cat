@@ -1,11 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QDebug>      // Debug
-#include <QPixmap>     // Add Image
-#include <QFileDialog> // File Dialog
-#include <QMessageBox> // Pop-up Window
+#include <QDebug>       // Debug
+#include <QPixmap>      // Add Image
+#include <QFileDialog>  // File Dialog
+#include <QMessageBox>  // Pop-up Window
 #include <QFile>
+#include <QClipboard>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -61,7 +62,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Button_UploadWordlist, SIGNAL(clicked()), this, SLOT(onButtonUploadWordlistClicked()));
     connect(ui->Button_RemoveWordlist, SIGNAL(clicked()), this, SLOT(onButtonRemoveWordlistClicked()));
     connect(ui->Button_CrackHashes, SIGNAL(clicked()), this, SLOT(onButtonCrackHashesClicked()));
-
+    connect(ui->Button_CopySelectedHash, SIGNAL(clicked()), this, SLOT(onButtonCopySelectedHashClicked()));
+    connect(ui->Button_CopySelectedKey, SIGNAL(clicked()), this, SLOT(onButtonCopySelectedKeyClicked()));
+    connect(ui->Button_SaveResultToFile, SIGNAL(clicked()), this, SLOT(onButtonSaveResultToFileClicked()));
+    
     // Force UI to update and process any pending events
     QApplication::processEvents();
 }
@@ -351,4 +355,61 @@ void MainWindow::onButtonCrackHashesClicked()
 
     QMessageBox::information(this, "Cracked", "Bosse cracked " + QString::number(crackedHashSet.size()) + " of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
     // TODO: Ask user to save result in a file
+}
+
+void MainWindow::onButtonCopySelectedHashClicked()
+{
+    // Get the selected item from the QListWidget
+    QListWidgetItem* item = ui->list_crackedHashes->currentItem();
+
+    // Check if an item is selected
+    if (item) {
+        // Get the item text
+        QString itemText = item->text();
+        // Get the hash from the item text
+        QString hash = itemText.split("::").at(0).trimmed();
+        // Copy the hash to the clipboard
+        QApplication::clipboard()->setText(hash);
+    }
+}
+
+void MainWindow::onButtonCopySelectedKeyClicked()
+{
+    // Get the selected item from the QListWidget
+    QListWidgetItem* item = ui->list_crackedHashes->currentItem();
+
+    // Check if an item is selected
+    if (item) {
+        // Get the item text
+        QString itemText = item->text();
+        // Get the key from the item text
+        QString key = itemText.split("::").at(1).trimmed();
+        // Copy the key to the clipboard
+        QApplication::clipboard()->setText(key);
+    }
+}
+
+void MainWindow::onButtonSaveResultToFileClicked()
+{
+    // Open a file dialog for saving the result
+    QString filePath = QFileDialog::getSaveFileName(this, "Save Result", "", "Text Files (*.txt)");
+    if (!filePath.isEmpty()) {
+        QFile file(filePath);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&file);
+            
+            // Loop through each item in the QListWidget
+            for(int i = 0; i < ui->list_crackedHashes->count(); ++i) {
+                QListWidgetItem* item = ui->list_crackedHashes->item(i);
+                if (item) {
+                    // Get the item text
+                    QString itemText = item->text();
+                    // Write the item text to the file
+                    out << itemText << "\n";
+                }
+            }
+            
+            file.close();
+        }
+    }
 }
