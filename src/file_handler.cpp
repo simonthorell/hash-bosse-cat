@@ -64,21 +64,44 @@ std::set<std::string> FileHandler::readHashesFromFile(const std::string& filenam
     return hashSet;
 }
 
-std::vector<std::string> FileHandler::readStringsFromFile(const std::string& filename, 
-                                                          size_t &linesRead) {
+std::vector<std::string> FileHandler::readStringsFromFile(const std::string& filename, size_t& linesRead) {
     std::vector<std::string> strings;
     std::ifstream file(filename);
     std::string line;
-    size_t currentCount = 0;
-    
-    while (std::getline(file, line) && currentCount < chunkSize) {
-        strings.push_back(line);
-        currentCount++;
+    size_t currentLineCount = 0;
+
+    while (currentLineCount < linesRead && std::getline(file, line)) {
+        // Discard lines until reaching the desired starting line
+        currentLineCount++;
     }
-    
-    linesRead += currentCount;
+
+    while (std::getline(file, line) && currentLineCount < linesRead + chunkSize) {
+        strings.push_back(line);
+        currentLineCount++;
+    }
+
+    linesRead = currentLineCount; // Update linesRead to the new position
     return strings;
 }
+
+// std::vector<std::string> FileHandler::readStringsFromFile(const std::string& filename, 
+//                                                           size_t &linesRead) {
+//     std::vector<std::string> strings;
+//     std::ifstream file(filename);
+//     std::string line;
+//     size_t currentLineCount = 0;
+    
+//     // Seek to the current file position
+//     file.seekg(linesRead);
+
+//     while (std::getline(file, line) && currentLineCount < chunkSize) {
+//         strings.push_back(line);
+//         currentLineCount++;
+//         linesRead++; // Increment linesRead in place
+//     }
+    
+//     return strings;
+// }
 
 //=============================================================================
 // Example usage:

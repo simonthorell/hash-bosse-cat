@@ -7,7 +7,6 @@
 #include <QMessageBox>  // Pop-up Window
 #include <QFile>
 #include <QClipboard>
-#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,8 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     singleHash = "";
     HashesFilesMap.clear();
     WordlistFilesMap.clear();
-    hashingAlgorithm = HashAlgorithm::SHA256; // Default Hashing Algorithm
-    saltAmount = 0;           // Default Salt Amount
+    hashingAlgorithm = HashAlgorithm::SHA256;
+    saltAmount = 0;
 
     // Set window to fixed size
     this->setFixedSize(this->size()); // This sets the fixed size to the current size
@@ -99,7 +98,7 @@ void MainWindow::styleGUI(QApplication& app) {
          "QProgressBar {"
         "    border: 2px solid grey;"
         "    border-radius: 5px;"
-        "    background-color: grey;"  // Light grey background
+        "    background-color: grey;"  // Grey background
         "    text-align: center;"  // Center-align the text
         "    color: black;"  // Set the text color to black
         "}"
@@ -143,7 +142,7 @@ void MainWindow::styleGUI(QApplication& app) {
                     "    border-radius: 3px;"  // Handle border radius
                     "}"
                     "QSlider::sub-page:horizontal {"
-                    "    background: rgb(42, 130, 218);"  // Neon green color for the filled part of the groove
+                    "    background: rgb(42, 130, 218);"  // Blue
                     "}";
 
     // Initialize slider value from saltAmount variable
@@ -195,9 +194,6 @@ void MainWindow::setSaltAmount(int value)
 
     // Force the widget to repaint itself
     ui->Slider_SelectSaltAmount->repaint();
-
-    // Debug
-    // qDebug() << "Updated saltAmount: " << saltAmount;
 }
 
 void MainWindow::setProgressBarValue(int progressPercentage)
@@ -227,8 +223,6 @@ void MainWindow::onButtonUploadHashesClicked()
         ui->list_UploadedHashlists->addItem(QFileInfo(filePath).fileName());
 
         setProgressBarValue(0); // Reset the progress bar value
-        
-        // qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
     }
 }
 
@@ -247,8 +241,6 @@ void MainWindow::onButtonRemoveHashesClicked()
         HashesFilesMap.erase(itemText.toUtf8().constData());
 
         setProgressBarValue(0); // Reset the progress bar value
-
-        // qDebug() << "Removed file: " << itemText;
     }
 }
 
@@ -267,8 +259,6 @@ void MainWindow::onButtonUploadWordlistClicked()
         ui->list_UploadedWordlists->addItem(QFileInfo(filePath).fileName());
 
         setProgressBarValue(0); // Reset the progress bar value
-        
-        // qDebug() << "Added file: " << QString::fromStdString(fileNameStd) << " Path: " << QString::fromStdString(filePathStd);
     }
 }
 
@@ -287,8 +277,6 @@ void MainWindow::onButtonRemoveWordlistClicked()
         WordlistFilesMap.erase(itemText.toUtf8().constData());
 
         setProgressBarValue(0); // Reset the progress bar value
-
-        // qDebug() << "Removed file: " << itemText;
     }
 }
 
@@ -300,12 +288,9 @@ void MainWindow::onButtonCrackHashesClicked()
     FileHandler fileHandler(chunkSize);
     size_t totalHashesLines = singleHash.empty() ? fileHandler.countFilesLinesInMap(HashesFilesMap) : 1;
     size_t totalWordlistLines = fileHandler.countFilesLinesInMap(WordlistFilesMap);
-    std::cout << "Total lines in wordlists: " << totalWordlistLines << std::endl;
 
-    // Create a set to keep track of cracked hashes to avoid duplicates
-    std::set<std::string> crackedHashSet;
-    // Create a hash set for processing
-    std::set<std::string> hashSet;
+    std::set<std::string> crackedHashSet; // Create a set to avoid duplicates
+    std::set<std::string> hashSet; // Create a hash set for processing
 
     if (!singleHash.empty()) {
         // If singleHash is not empty, use only the singleHash for processing
@@ -330,7 +315,6 @@ void MainWindow::onButtonCrackHashesClicked()
     for (const auto& wlEntry : WordlistFilesMap) {
         size_t linesRead = 0; // Lines read for the current file
         size_t currentFileLines = fileHandler.countFileLines(wlEntry.second);
-        std::cout << wlEntry.first << " has " << currentFileLines << " lines." << std::endl;
 
         do {
             auto chunk = fileHandler.readStringsFromFile(wlEntry.second, linesRead);
@@ -348,16 +332,15 @@ void MainWindow::onButtonCrackHashesClicked()
                 }
             }
 
-            totalLinesProcessed += linesRead;
+            totalLinesProcessed += chunk.size();
+
             // Update the progress bar based on total lines processed across all files
             int progressPercentage = static_cast<int>(static_cast<double>(totalLinesProcessed) / totalWordlistLines * 100);
             setProgressBarValue(progressPercentage);
-
             QApplication::processEvents(); // Process UI events to ensure UI updates properly
-        } while (linesRead > 0 && totalLinesProcessed < currentFileLines); // Continue until all lines are read in the current file
-        std::cout << "Finished processing " << wlEntry.first << "and read " << totalLinesProcessed << " lines." << std::endl;
-    }
 
+        } while (linesRead > 0 && linesRead < currentFileLines); // Continue until all lines are read in the current file
+    }
     QMessageBox::information(this, "Cracked", "Bosse cracked " + QString::number(crackedHashSet.size()) + " of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
 }
 
