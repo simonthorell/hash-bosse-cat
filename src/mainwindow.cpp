@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setFixedSize(this->size()); // This sets the fixed size to the current size
 
     // Load the app logo image
-    QPixmap pix("assets/black_bosse.png");
+    QPixmap pix(":/images/black_bosse.png");
 
     // Set the pixmap to the label
     ui->logoType->setPixmap(pix);
