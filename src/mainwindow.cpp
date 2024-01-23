@@ -7,6 +7,7 @@
 #include <QMessageBox>  // Pop-up Window
 #include <QFile>
 #include <QClipboard>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -295,10 +296,11 @@ void MainWindow::onButtonCrackHashesClicked()
 {
     ui->list_crackedHashes->clear(); // Clear the cracked hashes list
 
-    int chunkSize = 50; // TODO: Make this a user input field?
+    int chunkSize = 10000; // About 130Kb if avarage 12 chars per line
     FileHandler fileHandler(chunkSize);
     size_t totalHashesLines = singleHash.empty() ? fileHandler.countFilesLinesInMap(HashesFilesMap) : 1;
     size_t totalWordlistLines = fileHandler.countFilesLinesInMap(WordlistFilesMap);
+    std::cout << "Total lines in wordlists: " << totalWordlistLines << std::endl;
 
     // Create a set to keep track of cracked hashes to avoid duplicates
     std::set<std::string> crackedHashSet;
@@ -319,42 +321,44 @@ void MainWindow::onButtonCrackHashesClicked()
         }
     }
 
-    // Progress bar variables
     int currentIndex = 0; // Initialize a counter for the current index
     int totalWordlists = WordlistFilesMap.size(); // Get the total number of wordlists
 
+    size_t totalLinesProcessed = 0; // Keep track of total lines processed for progress update
+
     // Process the hashes in hashSet against each wordlist in WordlistFilesMap
     for (const auto& wlEntry : WordlistFilesMap) {
-        // Get the wordlist file name and path
-        std::string wlPath = wlEntry.second;
+        size_t linesRead = 0; // Lines read for the current file
+        size_t currentFileLines = fileHandler.countFileLines(wlEntry.second);
+        std::cout << wlEntry.first << " has " << currentFileLines << " lines." << std::endl;
 
-        // Crack the hashes
-        WordlistProcessor processor(fileHandler, hashSet, hashingAlgorithm, 0, saltAmount);
-        bool readyForNextBatch = processor.compareWordlistChunk(wlPath);
+        do {
+            auto chunk = fileHandler.readStringsFromFile(wlEntry.second, linesRead);
+            WordlistProcessor processor(fileHandler, hashSet, hashingAlgorithm, 0, saltAmount);
+            processor.compareWordlistChunk(chunk);
 
-        // Add cracked hashes to the set
-        for (const auto& pair : processor.crackedHashes) {
-            const std::string& hash = pair.first;
-            // Check if the hash is not a duplicate
-            if (crackedHashSet.find(hash) == crackedHashSet.end()) {
-                crackedHashSet.insert(hash);
-                // Convert std::string to QString
-                QString password = QString::fromStdString(pair.second);
-                // Create the display string for the QListWidgetItem
-                QString displayText = QString::fromStdString(hash) + "  ::  " + password;
-                // Add the item to the list
-                ui->list_crackedHashes->addItem(displayText);
+            // Handle cracked hashes
+            for (const auto& pair : processor.crackedHashes) {
+                const std::string& hash = pair.first;
+                if (crackedHashSet.find(hash) == crackedHashSet.end()) {
+                    crackedHashSet.insert(hash);
+                    QString password = QString::fromStdString(pair.second);
+                    QString displayText = QString::fromStdString(hash) + "  ::  " + password;
+                    ui->list_crackedHashes->addItem(displayText);
+                }
             }
-        }
 
-        // Update the progress bar
-        currentIndex++; // Increment the current index
-        int progressPercentage = static_cast<int>(static_cast<double>(currentIndex) / totalWordlists * 100);
-        setProgressBarValue(progressPercentage);
+            totalLinesProcessed += linesRead;
+            // Update the progress bar based on total lines processed across all files
+            int progressPercentage = static_cast<int>(static_cast<double>(totalLinesProcessed) / totalWordlistLines * 100);
+            setProgressBarValue(progressPercentage);
+
+            QApplication::processEvents(); // Process UI events to ensure UI updates properly
+        } while (linesRead > 0 && totalLinesProcessed < currentFileLines); // Continue until all lines are read in the current file
+        std::cout << "Finished processing " << wlEntry.first << "and read " << totalLinesProcessed << " lines." << std::endl;
     }
 
     QMessageBox::information(this, "Cracked", "Bosse cracked " + QString::number(crackedHashSet.size()) + " of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
-    // TODO: Ask user to save result in a file
 }
 
 void MainWindow::onButtonCopySelectedHashClicked()

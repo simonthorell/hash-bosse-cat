@@ -31,16 +31,9 @@ WordlistProcessor::WordlistProcessor(const FileHandler& fileHandler,
 // Description: This method compares a chunk of strings with the hashSet
 //              and returns true if ready to receive next batch.
 //=====================================================================
-bool WordlistProcessor::compareWordlistChunk(const std::string& filename) {
-    size_t linesRead = 0;
-    auto strings = fileHandler.readStringsFromFile(filename, linesRead);
-    
-    if (linesRead == 0) {
-        return false; // No more lines to read
-    }
-
+bool WordlistProcessor::compareWordlistChunk(const std::vector<std::string>& chunk) {
     // Process each string in parallel & compare to hashSet (hashes to crack)
-    std::for_each(std::execution::par, strings.begin(), strings.end(), 
+    std::for_each(std::execution::par, chunk.begin(), chunk.end(), 
                 [&](const std::string& str) {
         // Vector of salted & hashed variants of each string from wordlist
         auto hashedVariants = processString(str);

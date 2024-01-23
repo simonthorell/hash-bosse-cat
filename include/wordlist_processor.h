@@ -36,7 +36,7 @@ public:
                       int saltLength);
 
     // Public Methods
-    bool compareWordlistChunk(const std::string& filename);
+    bool compareWordlistChunk(const std::vector<std::string>& chunk);
 
     // Private Methods
     std::unordered_map<std::string, std::string> processString(const std::string& str);

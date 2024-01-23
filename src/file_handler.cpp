@@ -28,6 +28,18 @@ size_t FileHandler::countFilesLinesInMap(const std::unordered_map<std::string, s
     return totalLines;
 }
 
+size_t FileHandler::countFileLines(const std::string& filename) {
+    // count the lines in the file
+    std::ifstream file(filename);
+    size_t totalLines = 0;
+    std::string line;
+    while (std::getline(file, line)) {
+        totalLines++;
+    }
+    file.close();
+    return totalLines;
+}
+
 //=============================================================================
 // Public Methods: readHashesFromFile, readStringsFromFile
 // Description: These methods read hashes or strings from a file and return
@@ -64,7 +76,7 @@ std::vector<std::string> FileHandler::readStringsFromFile(const std::string& fil
         currentCount++;
     }
     
-    linesRead = currentCount;
+    linesRead += currentCount;
     return strings;
 }
 

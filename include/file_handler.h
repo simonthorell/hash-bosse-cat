@@ -15,6 +15,7 @@ public:
 
     // Public Methods
     size_t countFilesLinesInMap(const std::unordered_map<std::string, std::string>& filesMap);
+    size_t countFileLines(const std::string& filename);
     std::set<std::string> readHashesFromFile(const std::string& filename);
     std::vector<std::string> readStringsFromFile(const std::string& filename, size_t &linesRead);
 };
