@@ -11,7 +11,6 @@ include_directories(${SOURCE_DIR})
 
 file(GLOB_RECURSE SOURCES
     "${FORMS_DIR}/*.ui"
-    # "${FORMS_DIR}/*.qrc"
     "${INCLUDE_DIR}/*.h"
     "${SOURCE_DIR}/*.cpp"
 )
@@ -42,12 +41,19 @@ elseif(APPLE)
     # Add debugging binary to run in VS code
     add_executable(${CMAKE_PROJECT_NAME} main.cpp ${SOURCES} ${RESOURCE_ADDED})
 
+    # Set the app icon for macOS
+    set(MACOSX_BUNDLE_ICON_FILE favicon.icns)
+
+    # And the following tells CMake where to find and install the file itself.
+    set(app_icon_macos "${CMAKE_SOURCE_DIR}/resources/icons/favicon.icns")
+    set_source_files_properties(${app_icon_macos} PROPERTIES
+           MACOSX_PACKAGE_LOCATION "Resources")
+
     #Executable for macOS - build/src/MyProject.app
-    add_executable(HashBosseCat MACOSX_BUNDLE ${SOURCES} ${RESOURCE_ADDED})
+    add_executable(HashBosseCat MACOSX_BUNDLE ${SOURCES} ${RESOURCE_ADDED} ${app_icon_macos})
 
     set_target_properties(HashBosseCat PROPERTIES
                           MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/resources/Info.plist.in
-                          MACOSX_BUNDLE_ICON_FILE icons/favicon.icns
                           RESOURCE "${RESOURCES}")
 elseif(UNIX)
     add_executable(${CMAKE_PROJECT_NAME} main.cpp ${SOURCES} ${RESOURCE_ADDED})
