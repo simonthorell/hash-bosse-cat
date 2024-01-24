@@ -29,7 +29,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_PREFIX_PATH "/Users/simonthorell/Qt/6.6.1/macos/lib/cmake")
 
 # Find QT Framework libraries
-find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
 
 ## Fetch QT Base module (Not working properly! // Simon Thorell 2024-01-19)
 # FetchContent_Declare(

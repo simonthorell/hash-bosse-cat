@@ -44,6 +44,23 @@ These instructions will get you a copy of the project up and running on your loc
 5. **Modify the GUI**
     - Use the Qt Creator IDE to get a graphic tool for modifying the .ui files.
 
+6. **Bundle app for Mac OSX**
+    - Find the .app executable in the build/src folder and run macdeployqt to bundle.
+    ```bash
+    macdeployqt HashBosseCat.app  
+      
+    # OR to make a .dmg file directly  
+    macdeployqt HashBosseCat.app -dmg
+    ```
+    - if macdeplyqt tool is not found in your terminal, you can locate it and set the path using the terminal as per below example:
+    ```bash
+    export PATH="/Users/USERNAME/Qt/6.6.1/macos/bin:$PATH"
+    ```
+    - In order to run the application on MacOS you will need to code-sign the code using a valid certificate (You can manage it in Keychain Access). Then you can sign and bundle at the same time. Replace "MyCertificate" with your valid certificate.
+    ```bash
+    macdeployqt HashBosseCat.app -codesign=MyCertificate
+    ```
+
 ## Usage
 - Launch the application after successful installation.
 - Follow the on-screen instructions to input the hash values.

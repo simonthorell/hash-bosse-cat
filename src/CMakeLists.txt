@@ -23,7 +23,7 @@ qt6_add_resources(RESOURCE_ADDED ${RESOURCES})
 #=================== STATIC Library ====================#
 # Create a static library named MyProjectLib from the collected source files
 add_library(MyProjectLib ${SOURCE_FILES})
-target_link_libraries(MyProjectLib PRIVATE OpenSSL::SSL OpenSSL::Crypto Qt6::Core Qt6::Gui Qt6::Widgets) 
+target_link_libraries(MyProjectLib PRIVATE OpenSSL::Crypto Qt6::Core Qt6::Widgets) 
 
 #=================== SETUP EXECTUABLE ====================#
 # Enable debug logging on RELWITHDEBINFO configuration
@@ -50,9 +50,14 @@ elseif(APPLE)
            MACOSX_PACKAGE_LOCATION "Resources")
 
     #Executable for macOS - build/src/MyProject.app
-    add_executable(HashBosseCat MACOSX_BUNDLE ${SOURCES} ${RESOURCE_ADDED} ${app_icon_macos})
+    add_executable(HashBosseCat MACOSX_BUNDLE 
+                   ${SOURCES} 
+                   ${RESOURCE_ADDED} 
+                   ${app_icon_macos}
+                   ${RESOURCES_DIR}/images/black_bosse.png)
 
     set_target_properties(HashBosseCat PROPERTIES
+                          MACOSX_BUNDLE TRUE
                           MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/resources/Info.plist.in
                           RESOURCE "${RESOURCES}")
 elseif(UNIX)
@@ -70,14 +75,17 @@ target_include_directories(HashBosseCat PRIVATE ${INCLUDE_DIR})
 target_include_directories(HashBosseCat PRIVATE ${SOURCE_DIR})
 
 #=================== LINKING LIBRARIES ====================#
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE MyProjectLib OpenSSL::SSL OpenSSL::Crypto Qt6::Widgets)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE MyProjectLib OpenSSL::Crypto Qt6::Widgets)
+
 # For MacOS binary
-target_link_libraries(HashBosseCat PRIVATE MyProjectLib OpenSSL::SSL OpenSSL::Crypto Qt6::Widgets)
+target_link_libraries(HashBosseCat PRIVATE MyProjectLib OpenSSL::Crypto Qt6::Widgets)
 
 #=================== APP ICON ====================#
 if(APPLE)
     # Ensure the .icns file is copied to the macOS app bundle
     set_source_files_properties(${RESOURCES_DIR}/icons/favicon.icns PROPERTIES
+                                MACOSX_PACKAGE_LOCATION "Resources")
+    set_source_files_properties(${RESOURCES_DIR}/images/black_bosse.png PROPERTIES
                                 MACOSX_PACKAGE_LOCATION "Resources")
 elseif(WIN32)
     # Resource file for Windows is handled by .qrc
