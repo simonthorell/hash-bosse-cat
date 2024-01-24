@@ -1,7 +1,7 @@
 # HashBosseCat Password Recovery Tool
 ### Built using C++, Qt Framework, openSSL and CMake.
 
-<img src="resources/icons/favicon.png" width="400" height="400" alt="App Logo">
+<img src="resources/icons/favicon.png" width="280" height="280" alt="App Logo">
 
 ## Introduction
 Welcome to `hash-bosse-cat`, a sophisticated password recovery tool developed with the cutting-edge C++20 standards and the robust Qt framework for desktop GUI. Inspired by the agility and sharpness of a cat named Bosse, this tool aims to provide a sleek, user-friendly interface coupled with powerful wordlist-based hash cracking algorithms.
