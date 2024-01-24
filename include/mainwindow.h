@@ -27,6 +27,9 @@ private:
     // UI style variables
     QString greyStyle;
     QString neonGreenStyle;
+    // Cancel cracking flag
+     bool cancelRequested = false;
+     bool processIsRunning = false;
 
 public:
     // Constructor and Destructor

@@ -282,6 +282,23 @@ void MainWindow::onButtonRemoveWordlistClicked()
 
 void MainWindow::onButtonCrackHashesClicked()
 {
+    if (cancelRequested) {
+        // If cancel was already requested, don't start a new process.
+        // Optionally, you can add logic here to handle the button press when cancel is in progress.
+        return;
+    }
+    
+    if (processIsRunning) {
+        // If the process is running, set cancelRequested to true and return.
+        cancelRequested = true;
+        ui->Button_CrackHashes->setText("Start cracking Bosse!"); // Change the button text back to "Start"
+        return;
+    }
+
+    // Process is not running and we are starting it now.
+    processIsRunning = true;
+    cancelRequested = false;
+    ui->Button_CrackHashes->setText("Cancel"); // Change the button text to "Cancel"
     ui->list_crackedHashes->clear(); // Clear the cracked hashes list
 
     int chunkSize = 10000; // About 130Kb if avarage 12 chars per line
@@ -330,6 +347,11 @@ void MainWindow::onButtonCrackHashesClicked()
                     QString displayText = QString::fromStdString(hash) + "  ::  " + password;
                     ui->list_crackedHashes->addItem(displayText);
                 }
+
+                if (cancelRequested) {
+                    // If cancel is requested, break out of the loop.
+                    break;
+                }
             }
 
             totalLinesProcessed += chunk.size();
@@ -339,9 +361,18 @@ void MainWindow::onButtonCrackHashesClicked()
             setProgressBarValue(progressPercentage);
             QApplication::processEvents(); // Process UI events to ensure UI updates properly
 
+            if (cancelRequested) {
+                break; // If cancel is requested, break out of the outer loop as well.
+            }
+
         } while (linesRead > 0 && linesRead < currentFileLines); // Continue until all lines are read in the current file
     }
     QMessageBox::information(this, "Cracked", "Bosse cracked " + QString::number(crackedHashSet.size()) + " of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
+    
+    // Reset the cancelRequested flag and processIsRunning flag at the end of the process.
+    cancelRequested = false;
+    processIsRunning = false;
+    ui->Button_CrackHashes->setText("Start cracking Bosse!"); // Change the button text back to "Start"
 }
 
 void MainWindow::onButtonCopySelectedHashClicked()
