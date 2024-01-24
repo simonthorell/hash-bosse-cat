@@ -346,6 +346,7 @@ void MainWindow::onButtonCrackHashesClicked()
                     QString password = QString::fromStdString(pair.second);
                     QString displayText = QString::fromStdString(hash) + "  ::  " + password;
                     ui->list_crackedHashes->addItem(displayText);
+                    ui->list_crackedHashes->scrollToBottom();
                 }
 
                 if (cancelRequested) {
