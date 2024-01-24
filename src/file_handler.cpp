@@ -64,44 +64,37 @@ std::set<std::string> FileHandler::readHashesFromFile(const std::string& filenam
     return hashSet;
 }
 
-std::vector<std::string> FileHandler::readStringsFromFile(const std::string& filename, size_t& linesRead) {
+std::vector<std::string> FileHandler::readStringsFromFile(const std::string& filename, 
+                                                          size_t &linesRead) {
     std::vector<std::string> strings;
     std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open the file: " << filename << std::endl;
+        return strings; // Return the empty vector
+    }
+
+    // Seek to the last known position for this file, if it exists
+    if (filePositions.find(filename) != filePositions.end()) {
+        file.seekg(filePositions[filename]);
+    }
+
     std::string line;
     size_t currentLineCount = 0;
-
-    while (currentLineCount < linesRead && std::getline(file, line)) {
-        // Discard lines until reaching the desired starting line
-        currentLineCount++;
-    }
-
-    while (std::getline(file, line) && currentLineCount < linesRead + chunkSize) {
+    while (std::getline(file, line) && currentLineCount < chunkSize) {
         strings.push_back(line);
         currentLineCount++;
+        linesRead++; // Increment linesRead to keep track of the overall line number.
     }
 
-    linesRead = currentLineCount; // Update linesRead to the new position
+    // Store the position for the next read, if not at the end of file
+    if (!file.eof()) {
+        filePositions[filename] = file.tellg();
+    } else {
+        filePositions.erase(filename); // If at the end, remove the entry as it's no longer needed
+    }
+    
     return strings;
 }
-
-// std::vector<std::string> FileHandler::readStringsFromFile(const std::string& filename, 
-//                                                           size_t &linesRead) {
-//     std::vector<std::string> strings;
-//     std::ifstream file(filename);
-//     std::string line;
-//     size_t currentLineCount = 0;
-    
-//     // Seek to the current file position
-//     file.seekg(linesRead);
-
-//     while (std::getline(file, line) && currentLineCount < chunkSize) {
-//         strings.push_back(line);
-//         currentLineCount++;
-//         linesRead++; // Increment linesRead in place
-//     }
-    
-//     return strings;
-// }
 
 //=============================================================================
 // Example usage:

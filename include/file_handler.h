@@ -9,6 +9,7 @@
 class FileHandler {
 private:
     size_t chunkSize; // Size of chunks to read from file
+    std::unordered_map<std::string, std::streampos> filePositions; // last positions in files read
 public:
     // Constructor
     FileHandler(size_t chunkSize);
