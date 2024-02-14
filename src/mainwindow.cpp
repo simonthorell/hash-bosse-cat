@@ -335,7 +335,7 @@ void MainWindow::onButtonCrackHashesClicked()
 
         do {
             auto chunk = fileHandler.readStringsFromFile(wlEntry.second, linesRead);
-            WordlistProcessor processor(fileHandler, hashSet, hashingAlgorithm, 0, saltAmount);
+            WordlistProcessor processor(fileHandler, hashSet, hashingAlgorithm, saltAmount, 4);
             processor.compareWordlistChunk(chunk);
 
             // Handle cracked hashes

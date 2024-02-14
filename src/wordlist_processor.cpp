@@ -10,6 +10,11 @@
 #include <algorithm>
 #include <execution>
 #include <iostream>
+#include <random> // Include for std::random_device and std::mt19937
+#include <mutex>
+
+std::mutex globalGenMutex;
+std::mt19937 globalGen(std::random_device{}());
 
 //=====================================================================
 // Constructor: HashComparator
@@ -64,33 +69,55 @@ bool WordlistProcessor::compareWordlistChunk(const std::vector<std::string>& chu
 //=====================================================================
 std::unordered_map<std::string, std::string> 
 WordlistProcessor::processString(const std::string& str) {
+    std::cout << "Number of variants: " << numberOfVariants << std::endl;
+    std::cout << "Processing: " << str << std::endl;
+
+    // Map to store salted and hashed strings
     std::unordered_map<std::string, std::string> hashedVariants;
 
-    // If numberOfVariants is 0, then we only want to hash the string
+    // First, hash the original string regardless of numberOfVariants
+    std::string baseHashedStr = str;
+    std::cout << "Hashing: " << baseHashedStr << std::endl;
+    hashString(baseHashedStr); // Hash the original string
+    hashedVariants[str] = baseHashedStr;
+
+    // If numberOfVariants is 0, then we are done
     if (numberOfVariants == 0) {
-        std::string hashedStr = str;
-        hashString(hashedStr);
-        hashedVariants[str] = hashedStr;
         return hashedVariants;
     }
 
-    // Otherwise, we want to salt and hash the string "numberOfVariants" times
-    std::vector<std::string> saltedStrings(numberOfVariants, str);
-    std::vector<std::string> hashedStrings(numberOfVariants);
+    // Vector to store salted and hashed strings
+    std::vector<std::pair<std::string, std::string>> tempResults(numberOfVariants);
 
-    std::transform( 
-        std::execution::par, // Parallel computation of processed strings
-        saltedStrings.begin(), saltedStrings.end(), hashedStrings.begin(),
-        [&](std::string& s) {
-            saltString(s);
-            std::string hashed = s;
-            hashString(hashed);
-            return hashed;
-        }
-    );
+    // Execute in parallel
+    std::transform(std::execution::par, tempResults.begin(), tempResults.end(), tempResults.begin(),
+                   [&](auto& pair) -> std::pair<std::string, std::string> {
 
-    for (int i = 0; i < numberOfVariants; ++i) {
-        hashedVariants[saltedStrings[i]] = hashedStrings[i];
+                       // Use random variantIndex in commonSalts
+                       // Lock to safely generate a unique seed for this thread
+                       std::unique_lock<std::mutex> lock(globalGenMutex);
+                       unsigned int seed = globalGen();
+                       lock.unlock();
+                       // Initialize thread-local generator with the unique seed
+                       std::mt19937 localGen(seed);
+                       std::uniform_int_distribution<> distrib(0, saltGen.commonSaltsSize() - 1);
+                       int variantIndex = distrib(localGen); // Use local generator
+
+                       // Alternative 2 -- index is derived from the iterator position
+                       // int variantIndex = &pair - &tempResults[0];
+
+                       // Apply salt and hash to the string
+                       std::string saltedStr = str;
+                       saltString(saltedStr, variantIndex); // Apply salt variant based on index
+                       std::string hashed = saltedStr;
+                       std::cout << "Hashing: " << hashed << "using random common salt index: " << variantIndex << std::endl;
+                       hashString(hashed); // Hash the salted string
+                       return {saltedStr, hashed}; // Return the pair
+                   });
+
+    // Merge results into a map (single-threaded part)
+    for (const auto& pair : tempResults) {
+        hashedVariants[pair.first] = pair.second;
     }
 
     return hashedVariants;
@@ -100,9 +127,8 @@ WordlistProcessor::processString(const std::string& str) {
 // Private Method: saltString, hashString
 // Description: These methods salt and hash a string respectively.
 //=====================================================================
-void WordlistProcessor::saltString(std::string& str) {
-    std::string salt = saltGen.generateSalt(saltLength);
-    str += salt; // Add salt to the original string
+void WordlistProcessor::saltString(std::string& str, int variantIndex) {
+    str = saltGen.stripAndAddSalts(str, numberOfVariants, variantIndex);
 }
 
 void WordlistProcessor::hashString(std::string& str) {

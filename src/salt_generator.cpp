@@ -2,36 +2,49 @@
 // SaltGenerator Class Implementation
 //=============================================================================
 #include "salt_generator.h"
-#include <random>
-//=============================================================================
-// Constructor and Destructor: SaltGenerator, ~SaltGenerator
-// Description: Constructor and Destructor for the SaltGenerator class.
-//=============================================================================
-SaltGenerator::SaltGenerator() = default;
+
+SaltGenerator::SaltGenerator() {
+    // Initialize common salts with a mix of years, numbers, and special characters
+    // TODO: Replace with a file-based approach
+    commonSalts = {
+        // Adding more years
+        "1970", "1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979",
+        "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989",
+        "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999",
+        "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009",
+        "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019",
+        "2020", "2021", "2022", "2023", "2024" // 54 entries so far
+        
+        // Numeric sequences
+        "123", "234", "345", "456", "567", "678", "789", "890", "901", "012",
+        "111", "222", "333", "444", "555", "666", "777", "888", "999", // 19 more, 73 total
+        
+        // Special characters
+        "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "+", "=", "-", "[", "]", "{", "}", "|", 
+        ":", ";", "'", "\"", ",", "<", ".", ">", "/", "?", // 20 more, 93 total
+        
+        // Adding a few more to reach 100
+        "abc", "def", "ghi", "jkl", "mno", "pqr", "stu"
+    };
+}
 
 SaltGenerator::~SaltGenerator() = default;
-//=============================================================================
-// Public Method: generateSalt
-// Description: Generates a random salt of the specified length.
-//=============================================================================
-std::string SaltGenerator::generateSalt(size_t length) {
-    const char charset[] =
-        "0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
-    const size_t max_index = (sizeof(charset) - 1);
 
-    std::string salt;
-    salt.reserve(length);
+std::string SaltGenerator::stripAndAddSalts(const std::string& password, int numberOfVariants, int variantIndex) {
+    std::string strippedPassword = stripTrailingDigits(password);
 
-    // Create a random number generator
-    std::random_device rd;
-    std::mt19937 generator(rd());
-    std::uniform_int_distribution<size_t> distribution(0, max_index - 1);
-
-    for (size_t i = 0; i < length; ++i) {
-        salt += charset[distribution(generator)];
+    // Ensure variantIndex is within bounds
+    variantIndex = variantIndex % commonSalts.size();
+    
+    // Append a variant of common salts based on the provided variantIndex
+    if (numberOfVariants > 0 && variantIndex < commonSalts.size()) {
+        strippedPassword += commonSalts[variantIndex];
     }
 
-    return salt;
+    return strippedPassword;
+}
+
+std::string SaltGenerator::stripTrailingDigits(const std::string& str) {
+    auto it = std::find_if_not(str.rbegin(), str.rend(), ::isdigit).base();
+    return std::string(str.begin(), it);
 }

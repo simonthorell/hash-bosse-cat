@@ -25,6 +25,7 @@ private:
     int numberOfVariants;          // Number of salted variants to generate for each string
     int saltLength;                // Length of salt to generate for each string
     std::set<std::string> hashSet; // Set of hashes that wordlist will be compared against
+    
 public:
     std::unordered_map<std::string, std::string> crackedHashes; // Map of cracked hashes
 public:
@@ -40,7 +41,7 @@ public:
 
     // Private Methods
     std::unordered_map<std::string, std::string> processString(const std::string& str);
-    void saltString(std::string& str);
+    void saltString(std::string& str, int variantIndex);
     void hashString(std::string& str);
 };
 
