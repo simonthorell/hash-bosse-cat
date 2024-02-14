@@ -15,6 +15,14 @@ Welcome to `hash-bosse-cat`, a sophisticated password recovery tool developed wi
 - **Support for Multiple Hash Types**: Compatible with a variety of hashing algorithms.
 - **Cross-Platform**: Works seamlessly on multiple operating systems thanks to the QT framework.
 
+## Usage
+- Launch the application after successful installation.
+- Follow the on-screen instructions to input the hash values.
+- Load your wordlist file through the GUI.
+- Select the appropriate hash type and start the recovery process. Monitor the progress through the interactive UI.
+
+<img src="resources/images/app.png" width="800" height="740" alt="App Logo">
+
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
@@ -62,12 +70,6 @@ These instructions will get you a copy of the project up and running on your loc
     ```bash
     macdeployqt HashBosseCat.app -codesign=MyCertificate
     ```
-
-## Usage
-- Launch the application after successful installation.
-- Follow the on-screen instructions to input the hash values.
-- Load your wordlist file through the GUI.
-- Select the appropriate hash type and start the recovery process. Monitor the progress through the interactive UI.
 
 ## Contributing
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
