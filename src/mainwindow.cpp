@@ -1,13 +1,20 @@
+//==============================================================================
+// MainWindow Qt GUI Class Implementation
+//==============================================================================
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
-#include <QDebug>       // Debug
-#include <QPixmap>      // Add Image
-#include <QFileDialog>  // File Dialog
-#include <QMessageBox>  // Pop-up Window
+#include <QDebug>
+#include <QPixmap>
+#include <QFileDialog>
+#include <QMessageBox>
 #include <QFile>
 #include <QClipboard>
 
+//=====================================================================
+// Constructor: MainWindow
+// Description: This constructor sets up the main window of the app and
+//              initializes the UI.
+//=====================================================================
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -90,21 +97,21 @@ void MainWindow::styleGUI(QApplication& app) {
     app.setPalette(darkPalette);
 
     app.setStyleSheet(
-        // STYLE SHEET FOR QCOMBOBOX
+        // Stylesheet for QComboBox
         "QComboBox { background-color: #303030; color: white; }"
         "QToolTip { color: #ffffff; background-color: #000000; border: 1px solid white; }"
         "QPushButton { background-color: #303030; color: white; }"
-        // STYLE SHEET FOR PROGRESS BAR
+        // Styleshet for QProgressBar
          "QProgressBar {"
         "    border: 2px solid grey;"
         "    border-radius: 5px;"
         "    background-color: grey;"  // Grey background
-        "    text-align: center;"  // Center-align the text
-        "    color: black;"  // Set the text color to black
+        "    text-align: center;"      // Center-align the text
+        "    color: black;"            // Set the text color to black
         "}"
         "QProgressBar::chunk {"
-        "    background-color: rgba(57, 255, 20, 128);"  // 50% transparent neon green
-        "    width: 10px;"  // Width of the 'chunk'
+        "    background-color: rgba(57, 255, 20, 128);"
+        "    width: 10px;"    // Width of the 'chunk'
         "    margin: 0.5px;"  // Optional: add slight spacing between chunks
         "}"
     );
@@ -121,8 +128,8 @@ void MainWindow::styleGUI(QApplication& app) {
                 "QSlider::handle:horizontal {"
                 "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #f6f7fa);"
                 "    border: 1px solid #5c5c5c;"
-                "    width: 18px;"  // Handle width
-                "    margin: -2px 0;"  // Handle margin
+                "    width: 18px;"         // Handle width
+                "    margin: -2px 0;"      // Handle margin
                 "    border-radius: 3px;"  // Handle border radius
                 "}"
                 "QSlider::sub-page:horizontal {"
@@ -137,8 +144,8 @@ void MainWindow::styleGUI(QApplication& app) {
                     "QSlider::handle:horizontal {"
                     "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #f6f7fa);"
                     "    border: 1px solid #5c5c5c;"
-                    "    width: 18px;"  // Handle width
-                    "    margin: -2px 0;"  // Handle margin
+                    "    width: 18px;"         // Handle width
+                    "    margin: -2px 0;"      // Handle margin
                     "    border-radius: 3px;"  // Handle border radius
                     "}"
                     "QSlider::sub-page:horizontal {"
@@ -299,7 +306,7 @@ void MainWindow::onButtonCrackHashesClicked()
     processIsRunning = true;
     cancelRequested = false;
     ui->Button_CrackHashes->setText("Cancel"); // Change the button text to "Cancel"
-    ui->list_crackedHashes->clear(); // Clear the cracked hashes list
+    ui->list_crackedHashes->clear();           // Clear the cracked hashes list
 
     int chunkSize = 10000; // About 130Kb if avarage 12 chars per line
     FileHandler fileHandler(chunkSize);
@@ -307,7 +314,7 @@ void MainWindow::onButtonCrackHashesClicked()
     size_t totalWordlistLines = fileHandler.countFilesLinesInMap(WordlistFilesMap);
 
     std::set<std::string> crackedHashSet; // Create a set to avoid duplicates
-    std::set<std::string> hashSet; // Create a hash set for processing
+    std::set<std::string> hashSet;        // Create a hash set for processing
 
     if (!singleHash.empty()) {
         // If singleHash is not empty, use only the singleHash for processing
@@ -350,7 +357,6 @@ void MainWindow::onButtonCrackHashesClicked()
                 }
 
                 if (cancelRequested) {
-                    // If cancel is requested, break out of the loop.
                     break;
                 }
             }
@@ -368,12 +374,14 @@ void MainWindow::onButtonCrackHashesClicked()
 
         } while (linesRead > 0 && linesRead < currentFileLines); // Continue until all lines are read in the current file
     }
-    QMessageBox::information(this, "Cracked", "Bosse cracked " + QString::number(crackedHashSet.size()) + " of " + QString::number(totalHashesLines) + " hashes using " + QString::number(totalWordlistLines) + " words.");
+    QMessageBox::information(this, "Cracked", "Bosse cracked " + QString::number(crackedHashSet.size()) + 
+                             " of " + QString::number(totalHashesLines) + " hashes using " + 
+                             QString::number(totalWordlistLines) + " words.");
     
     // Reset the cancelRequested flag and processIsRunning flag at the end of the process.
     cancelRequested = false;
     processIsRunning = false;
-    ui->Button_CrackHashes->setText("Start cracking Bosse!"); // Change the button text back to "Start"
+    ui->Button_CrackHashes->setText("Start cracking Bosse!");
 }
 
 void MainWindow::onButtonCopySelectedHashClicked()

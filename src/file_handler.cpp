@@ -15,7 +15,8 @@ FileHandler::FileHandler(size_t chunkSize) : chunkSize(chunkSize) {}
 // Description: This method counts the number of lines in all files in a map
 //              and returns the total number of lines.
 //=============================================================================
-size_t FileHandler::countFilesLinesInMap(const std::unordered_map<std::string, std::string>& filesMap) {
+size_t FileHandler::countFilesLinesInMap(const std::unordered_map<std::string, 
+                                               std::string>& filesMap) {
     size_t totalLines = 0;
     for (auto const& [key, val] : filesMap) {
         std::ifstream file(val);
@@ -95,13 +96,3 @@ std::vector<std::string> FileHandler::readStringsFromFile(const std::string& fil
     
     return strings;
 }
-
-//=============================================================================
-// Example usage:
-//=============================================================================
-/*
-FileHandler fileHandler;
-auto hashedPasswords = fileHandler.readHashesFromFile("hashes.txt");
-auto wordlistStrings = fileHandler.readStringsFromFile("wordlist.txt");
-*/
-

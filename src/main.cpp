@@ -1,7 +1,7 @@
 //==============================================================================
 // Program: HashBosseCat - Advanced Password Recovery Tool
 // Author: Simon Thorell
-// Date: 2024-01-17
+// Date: 2024-02-16
 // Version: 1.0
 // Description: Using the GUI to upload a file of hashes to crack, the program
 //              will attempt to crack the hashes using a dictionary attack.

@@ -5,9 +5,8 @@
 
 SaltGenerator::SaltGenerator() {
     // Initialize common salts with a mix of years, numbers, and special characters
-    // TODO: Replace with a file-based approach
     commonSalts = {
-        // Adding more years
+        // TODO: Replace with a file-based approach
         "1970", "1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979",
         "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989",
         "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999",
@@ -27,9 +26,17 @@ SaltGenerator::SaltGenerator() {
         "abc", "def", "ghi", "jkl", "mno", "pqr", "stu"
     };
 }
-
+//=====================================================================
+// Constructor: SaltGenerator
+// Description: This constructor creates a SaltGenerator object.
+//=====================================================================
 SaltGenerator::~SaltGenerator() = default;
 
+//=====================================================================
+// Public Method: stripAndAddSalts
+// Description: Strips trailing digits from the password and appends a
+//              variant of common salts based on the provided variantIndex.
+//=====================================================================
 std::string SaltGenerator::stripAndAddSalts(const std::string& password, int numberOfVariants, int variantIndex) {
     std::string strippedPassword = stripTrailingDigits(password);
 
@@ -44,6 +51,10 @@ std::string SaltGenerator::stripAndAddSalts(const std::string& password, int num
     return strippedPassword;
 }
 
+//=====================================================================
+// Private Method: stripTrailingDigits
+// Description: Strips trailing digits from the input string.
+//=====================================================================
 std::string SaltGenerator::stripTrailingDigits(const std::string& str) {
     auto it = std::find_if_not(str.rbegin(), str.rend(), ::isdigit).base();
     return std::string(str.begin(), it);

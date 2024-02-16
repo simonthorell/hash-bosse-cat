@@ -1,5 +1,5 @@
 //=====================================================================
-// HashComparator Class Implementation
+// WordlistProcessor Class Implementation
 // Description: This class is used to compare a chunk of strings with
 //              a hash set. The hash set is a set of hashes that should
 //              be cracked by comparing them to the chunk of strings.
@@ -10,14 +10,14 @@
 #include <algorithm>
 #include <execution>
 #include <iostream>
-#include <random> // Include for std::random_device and std::mt19937
+#include <random>
 #include <mutex>
 
 std::mutex globalGenMutex;
 std::mt19937 globalGen(std::random_device{}());
 
 //=====================================================================
-// Constructor: HashComparator
+// Constructor: WordlistProcessor
 // Description: This constructor creates a HashComparator object.
 //=====================================================================
 WordlistProcessor::WordlistProcessor(const FileHandler& fileHandler, 
@@ -27,9 +27,6 @@ WordlistProcessor::WordlistProcessor(const FileHandler& fileHandler,
                                      int saltLength)
     : fileHandler(fileHandler), hashSet(hashSet), hashAlgorithm(algorithm), 
       numberOfVariants(numberOfVariants), saltLength(saltLength) {
-    // std::cout << "Constructor - hashAlgorithm: " << static_cast<int>(hashAlgorithm) << std::endl;
-    // std::cout << "Constructor - numberOfVariants: " << numberOfVariants << std::endl;
-    // std::cout << "Constructor - saltLength: " << saltLength << std::endl;
 }
 //=====================================================================
 // Method: compareWordlistChunk
@@ -44,11 +41,8 @@ bool WordlistProcessor::compareWordlistChunk(const std::vector<std::string>& chu
         auto hashedVariants = processString(str);
         // Compare each hashed variant to the hashSet
         for (auto& [originalStr, hashedStr] : hashedVariants) {
-            // std::cout << "Comparing: " << originalStr << " to " << hashedStr << std::endl;
             if (hashSet.find(hashedStr) != hashSet.end()) { // Binary search set
-                // std::cout << "Found match: " << originalStr << " to " << hashedStr << std::endl;
                 crackedHashes[hashedStr] = originalStr; // Handle cracked hash
-                // Hash = key, String = value
             }
         }
     });
@@ -58,7 +52,8 @@ bool WordlistProcessor::compareWordlistChunk(const std::vector<std::string>& chu
        The GUI we will also implement a progressbar by deviding chunk 
        by the total amount of lines in wordlist to get "% done". */
 
-    return true; // Return true if ready to receive next batch of wordlist strings
+    // Return true when ready to receive next batch of wordlist strings
+    return true;
 }
 
 //=====================================================================
@@ -110,7 +105,8 @@ WordlistProcessor::processString(const std::string& str) {
                        std::string saltedStr = str;
                        saltString(saltedStr, variantIndex); // Apply salt variant based on index
                        std::string hashed = saltedStr;
-                       std::cout << "Hashing: " << hashed << "using random common salt index: " << variantIndex << std::endl;
+                       std::cout << "Hashing: " << hashed << "using random common salt index: " 
+                                 << variantIndex << std::endl;
                        hashString(hashed); // Hash the salted string
                        return {saltedStr, hashed}; // Return the pair
                    });
@@ -147,17 +143,3 @@ void WordlistProcessor::hashString(std::string& str) {
             break;
     }
 }
-
-//=====================================================================
-// Example Implementation
-//=====================================================================
-// size_t chunkSize = 100000;
-// FileHandler fileHandler(chunkSize);
-// auto hashSet = fileHandler.readHashesFromFile("hashes.txt");
-// WordlistProcessor processor(fileHandler, hashSet, HashAlgorithm::MD5, 10, 5);
-
-// const std::string filename = "wordlist.txt";
-// while (processor.compareNextChunk(filename)) {
-//     // Continue comparing
-//     // Optionally, synchronize with the file reading or handle results
-// }

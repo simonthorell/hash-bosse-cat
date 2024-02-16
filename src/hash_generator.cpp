@@ -9,13 +9,9 @@
 // Constructor and Destructor: HashGenerator, ~HashGenerator
 // Description: Constructor and Destructor for the HashGenerator class.
 //==============================================================================
-HashGenerator::HashGenerator() {
-    // TODO: add constructor code (if needed)
-}
+HashGenerator::HashGenerator() {}
 
-HashGenerator::~HashGenerator() {
-    // TODO: add destructor code (if needed)
-}
+HashGenerator::~HashGenerator() {}
 //==============================================================================
 // Public Methods: computeMD5, computeSHA1, computeSHA256
 // Description: Computes a MD5, SHA1, or SHA256 hash of the input string.
