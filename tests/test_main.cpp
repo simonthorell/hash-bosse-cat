@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-// Include test suites here...
+#include "test_file_handler.cpp"
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

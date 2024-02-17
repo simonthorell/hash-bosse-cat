@@ -8,7 +8,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 # Link against gtest or gtest_main as needed
-add_executable(TestMyProject test_main.cpp) # Adjust with your test files
+add_executable(TestMyProject test_file_handler.cpp test_main.cpp) # Adjust with your test files
 # target_link_libraries(TestMyProject gtest_main)
 target_link_libraries(TestMyProject gtest_main MyProjectLib)
 
